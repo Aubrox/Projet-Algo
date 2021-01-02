@@ -27,3 +27,8 @@ void affichageMenu(void)
 	printf("\t 6. Annulation d'une reservation \n");
 	printf("\t 7. Quitter l'application \n");
 }
+
+void affichageJeux(void)
+{
+	
+}
