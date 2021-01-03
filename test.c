@@ -130,4 +130,6 @@ void afficherJeux( Jeux *tabJeux[], int tailleLogJeux)
         printf("  %d\t%s\t\t\t%d\t\t%s\n",tabJeux[i]->id,tabJeux[i]->type,tabJeux[i]->nbExemplaire,tabJeux[i]->nom);
     }
 }
-
+void affichageEmprunt (void)
+{
+}
