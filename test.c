@@ -1,6 +1,6 @@
 #include "test.h"
 
-void test1 (void)
+void globalJeu(void)
 {    
     int tailleLogJeux;
     Jeux *tabJeux[50];

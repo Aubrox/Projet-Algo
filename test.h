@@ -10,7 +10,7 @@ typedef struct
     int nbExemplaire;
 }Jeux;
 
-void test1(void);
+void globalJeu(void);
 int remplirTab(Jeux *tabJeux[],int taillePhyJeux);
 void afficherJeux( Jeux *tabJeux[], int tailleLogJeux);
 Jeux LireJeux (FILE *flot);
