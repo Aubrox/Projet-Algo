@@ -25,8 +25,10 @@ int choixMenu (void)
 	{
 	case 1:
 		test1();
-		break;
-	
+        break;
+	case 2:
+        testEmprunt();
+        break;
 	default:
 		break;
 	}
@@ -130,6 +132,109 @@ void afficherJeux( Jeux *tabJeux[], int tailleLogJeux)
         printf("  %d\t%s\t\t\t%d\t\t%s\n",tabJeux[i]->id,tabJeux[i]->type,tabJeux[i]->nbExemplaire,tabJeux[i]->nom);
     }
 }
-void affichageEmprunt (void)
+
+
+// Début des fonctions sur les listes 
+
+Liste listenouv(void)
 {
+    Liste l;
+    l=NULL;
+    return l;
 }
+Booleen vide(Liste l)
+{
+    if(l==NULL)
+        return vrai;
+    return faux;
+}
+void testEmprunt ()
+{   
+    Jeux tabJeux;
+    Liste l;
+    Maillon f;
+    char dateEmp[20];
+    FILE* flux;
+    flux=fopen("Emprunts.txt","r");
+    if(flux == NULL)
+    {
+        printf("Problème d'ouverture du fichier d'emprunt");
+        exit(1);
+    }
+    l=listenouv();
+    fscanf(flux,"%d%d%d%d%d%d%*c",&f.idEmprunt,&f.idAdherent,&f.idJeu,&f.jour,&f.mois,&f.annees);
+    while(!feof(flux))
+    {
+        l=insertionEnTete(l,f);
+        fscanf(flux,"%d%d%d%d%d%d%*c",&f.idEmprunt,&f.idAdherent,&f.idJeu,&f.jour,&f.mois,&f.annees);
+    }
+    afficherListe(l);
+    fclose(flux);
+}
+
+Liste insertionEnTete(Liste l,Maillon f)
+{   
+    Maillon *m;
+    m = (Maillon*)malloc(sizeof(Maillon));
+    if (m==NULL)
+    {
+        printf("Pb malloc\n");
+        exit(1);
+    }
+    m->idEmprunt = f.idEmprunt;
+    m->idAdherent = f.idAdherent;
+    m->idJeu = f.idJeu;
+    m->jour = f.jour;
+    m->mois = f.mois;
+    m->annees = f.annees;
+    m->suiv = l;
+    return m;
+}
+
+void afficherListe(Liste l)
+{   
+    printf("idEmprunt\tidAdherent\tidJeu\tdate\n");
+    while (!vide(l))
+    {   
+        printf("\n");
+        printf("%d\t", l->idEmprunt);
+        printf("%d\t", l->idAdherent);
+        printf("%d\t", l->idJeu);
+        printf("%d/%d/%d\t", l->jour,l->mois,l->annees);
+        printf("\n");
+        l = l->suiv;
+    }
+}
+
+/*Liste insertionEnTete(Liste l, int x)
+{   
+    FILE* flot;
+    
+    Maillon *m;
+    m = (Maillon*)malloc(sizeof(maillon));
+    if (m==NULL)
+    {
+        printf("Pb malloc\n");
+        exit(1);
+    }
+    m->idEmprunt = x;
+    m->idAdherent = x;
+    m->idJeu = x;
+    m->dateEmp = x;
+    m->suiv = l;
+    return m;
+}
+
+
+/*Liste inserer(Liste l, int x)
+{
+    if(l==NULL)
+        return insertionEnTete(l, x); 
+    if(x < l->v)
+        return insertionEnTete(l, x);
+    if(x==l->v)
+        return l;
+    l->suiv = inserer(l->suiv, x);
+    return l;
+}
+*/
