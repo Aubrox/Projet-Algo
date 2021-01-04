@@ -24,7 +24,7 @@ int choixMenu (void)
 	switch (choix)
 	{
 	case 1:
-		test1();
+		globalJeu();
 		break;
 	
 	default:
@@ -106,6 +106,15 @@ void triTabJeux(Jeux *tabJeux[], int tailleLogJeux)
                 tmp=copyJeu(tabJeux[i]);
                 tabJeux[i]=tabJeux[j];
                 tabJeux[j]=tmp;
+            } 
+            if((strcmp(tabJeux[j]->type, tabJeux[i]->type))==0)
+            {
+                if((strcmp(tabJeux[j]->nom, tabJeux[i]->nom))<0)
+                {
+                    tmp=copyJeu(tabJeux[i]);
+                    tabJeux[i]=tabJeux[j];
+                    tabJeux[j]=tmp;
+                }
             }
         }
     }
