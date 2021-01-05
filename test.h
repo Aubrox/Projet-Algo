@@ -23,11 +23,12 @@ typedef struct maillon
 
 typedef enum {faux,vrai} Booleen;
 
-void test1(void);
+void global (void);
+int test1 (Jeux *tabJeux[]);
 int remplirTab(Jeux *tabJeux[],int taillePhyJeux);
 void afficherJeux( Jeux *tabJeux[], int tailleLogJeux);
 Jeux LireJeux (FILE *flot);
-int choixMenu (void);
+int choixMenu (Jeux *tabJeux[],int tailleLogJeux,Liste l);
 void affichageMenu(void);
 void triTabJeux(Jeux *tabJeux[], int tailleLogJeux);
 Jeux* copyJeu(Jeux *Jeu);
@@ -36,9 +37,10 @@ Jeux* copyJeu(Jeux *Jeu);
 // LISTE
 Liste listenouv(void);
 Booleen vide(Liste l);
-void testEmprunt ();
+Liste testEmprunt (Liste l);
 Liste insertionEnTete(Liste l,Maillon f);
-void afficherListe(Liste l);
+void afficherListe(Liste l, Jeux *tabJeux[], int tailleLogJeux);
+int rechercheID (Liste l, Jeux *tabJeux[],int *rang,int tailleLogJeux);
 //Liste insertionEnTete(Liste l, int x);
 //Liste inserer(Liste l, int x);
 

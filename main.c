@@ -2,6 +2,6 @@
 
 int main(void)
 {
-	choixMenu();
+	global();
 	return 0;
 }

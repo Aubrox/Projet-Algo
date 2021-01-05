@@ -1,15 +1,27 @@
 #include "test.h"
-
-void test1 (void)
+void global (void)
+{   
+    Jeux *tabJeux[50];      /* Chargement tableau des Jeux*/
+    int tailleLogJeux;
+    tailleLogJeux=test1(tabJeux);
+    /*----------------------------------------------------------------------------*/
+    Liste l;                        // Chargement Tableau des emprunts
+    l=testEmprunt(l);
+    /*----------------------------------------------------------------------------*/
+    
+    /*----------------------------------------------------------------------------*/
+    choixMenu(tabJeux,tailleLogJeux,l);            //Puis le choix 
+}
+int test1 (Jeux *tabJeux[])
 {    
     int tailleLogJeux;
-    Jeux *tabJeux[50];
     tailleLogJeux=remplirTab(tabJeux,50);
     triTabJeux(tabJeux,tailleLogJeux);
     afficherJeux(tabJeux,tailleLogJeux);
+    return tailleLogJeux;
 }
 
-int choixMenu (void)
+int choixMenu (Jeux *tabJeux[],int tailleLogJeux,Liste l)
 {
 	int choix;
 	affichageMenu();
@@ -24,10 +36,10 @@ int choixMenu (void)
 	switch (choix)
 	{
 	case 1:
-		test1();
+        afficherJeux(tabJeux,tailleLogJeux);
         break;
 	case 2:
-        testEmprunt();
+        afficherListe(l,tabJeux,tailleLogJeux);
         break;
 	default:
 		break;
@@ -148,10 +160,8 @@ Booleen vide(Liste l)
         return vrai;
     return faux;
 }
-void testEmprunt ()
+Liste testEmprunt (Liste l)
 {   
-    Jeux tabJeux;
-    Liste l;
     Maillon f;
     char dateEmp[20];
     FILE* flux;
@@ -168,8 +178,8 @@ void testEmprunt ()
         l=insertionEnTete(l,f);
         fscanf(flux,"%d%d%d%d%d%d%*c",&f.idEmprunt,&f.idAdherent,&f.idJeu,&f.jour,&f.mois,&f.annees);
     }
-    afficherListe(l);
     fclose(flux);
+    return l;
 }
 
 Liste insertionEnTete(Liste l,Maillon f)
@@ -191,21 +201,43 @@ Liste insertionEnTete(Liste l,Maillon f)
     return m;
 }
 
-void afficherListe(Liste l)
+void afficherListe(Liste l, Jeux *tabJeux[], int tailleLogJeux)
 {   
-    printf("idEmprunt\tidAdherent\tidJeu\tdate\n");
+    int trouve;
+    int rang;
+    printf("Nom du jeu\tId de l'emprunteur\tDate de l'emprunteur\n");
+    trouve=rechercheID(l,tabJeux,&rang,tailleLogJeux);
     while (!vide(l))
     {   
-        printf("\n");
-        printf("%d\t", l->idEmprunt);
-        printf("%d\t", l->idAdherent);
-        printf("%d\t", l->idJeu);
-        printf("%d/%d/%d\t", l->jour,l->mois,l->annees);
+        if (trouve==1)
+        {    
+            printf("%s\t",tabJeux[rang]->nom);
+            printf("ID emprunteur(nom prenom etc)\t");
+            printf("%d/%d/%d\t\n", l->jour,l->mois,l->annees);    // FAUT FAIRE ADERENT POUR TOUS Y METRE DANS LE FIAK
+        }
+        else
+        {
+            printf("Pas de nom correspondant\t");
+            printf("ID emprunteur(nom prenom etc)\t");
+            printf("%d/%d/%d\t\n", l->jour,l->mois,l->annees);  
+        }           
         printf("\n");
         l = l->suiv;
+        trouve=rechercheID(l,tabJeux,&rang,tailleLogJeux);
     }
 }
-
+int rechercheID (Liste l, Jeux *tabJeux[],int *rang,int tailleLogJeux)
+{
+    for (int i = 0; i < tailleLogJeux; ++i)
+    {
+        if(l->idJeu==tabJeux[i]->id)
+        { 
+        *rang=i;
+        return 1;
+        }
+    }
+    return 0;
+}
 /*Liste insertionEnTete(Liste l, int x)
 {   
     FILE* flot;
