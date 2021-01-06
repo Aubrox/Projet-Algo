@@ -8,9 +8,10 @@ void global (void)
     Liste l;                        // Chargement Tableau des emprunts
     l=testEmprunt(l);
     /*----------------------------------------------------------------------------*/
-    
+    ListeAD AD;
+    AD=ChargementAdherent(AD);     //Chargement tableau des adherents
     /*----------------------------------------------------------------------------*/
-    choixMenu(tabJeux,tailleLogJeux,l);            //Puis le choix 
+    choixMenu(tabJeux,tailleLogJeux,l,AD);            //Puis le choix 
 }
 int test1 (Jeux *tabJeux[])
 {    
@@ -21,7 +22,7 @@ int test1 (Jeux *tabJeux[])
     return tailleLogJeux;
 }
 
-int choixMenu (Jeux *tabJeux[],int tailleLogJeux,Liste l)
+int choixMenu (Jeux *tabJeux[],int tailleLogJeux,Liste l,ListeAD AD)
 {
 	int choix;
 	affichageMenu();
@@ -39,7 +40,7 @@ int choixMenu (Jeux *tabJeux[],int tailleLogJeux,Liste l)
         afficherJeux(tabJeux,tailleLogJeux);
         break;
 	case 2:
-        afficherListe(l,tabJeux,tailleLogJeux);
+        afficherListe(l,tabJeux,tailleLogJeux,AD);
         break;
 	default:
 		break;
@@ -150,9 +151,7 @@ void afficherJeux( Jeux *tabJeux[], int tailleLogJeux)
 
 Liste listenouv(void)
 {
-    Liste l;
-    l=NULL;
-    return l;
+    return NULL;
 }
 Booleen vide(Liste l)
 {
@@ -163,7 +162,6 @@ Booleen vide(Liste l)
 Liste testEmprunt (Liste l)
 {   
     Maillon f;
-    char dateEmp[20];
     FILE* flux;
     flux=fopen("Emprunts.txt","r");
     if(flux == NULL)
@@ -201,7 +199,7 @@ Liste insertionEnTete(Liste l,Maillon f)
     return m;
 }
 
-void afficherListe(Liste l, Jeux *tabJeux[], int tailleLogJeux)
+void afficherListe(Liste l, Jeux *tabJeux[], int tailleLogJeux,ListeAD AD)
 {   
     int trouve;
     int rang;
@@ -212,17 +210,18 @@ void afficherListe(Liste l, Jeux *tabJeux[], int tailleLogJeux)
         if (trouve==1)
         {    
             printf("%s\t",tabJeux[rang]->nom);
-            printf("ID emprunteur(nom prenom etc)\t");
+            printf("%d%s%s%s%d/%d/%d\t",AD->idAdherent,AD->civ,AD->nom,AD->prenom,AD->jour,AD->mois,AD->annees);
             printf("%d/%d/%d\t\n", l->jour,l->mois,l->annees);    // FAUT FAIRE ADERENT POUR TOUS Y METRE DANS LE FIAK
         }
         else
         {
             printf("Pas de nom correspondant\t");
-            printf("ID emprunteur(nom prenom etc)\t");
+            printf("%d%s%s%s%d/%d/%d\t",AD->idAdherent,AD->civ,AD->nom,AD->prenom,AD->jour,AD->mois,AD->annees);
             printf("%d/%d/%d\t\n", l->jour,l->mois,l->annees);  
         }           
         printf("\n");
         l = l->suiv;
+        AD = AD->s;
         trouve=rechercheID(l,tabJeux,&rang,tailleLogJeux);
     }
 }
@@ -238,6 +237,115 @@ int rechercheID (Liste l, Jeux *tabJeux[],int *rang,int tailleLogJeux)
     }
     return 0;
 }
+
+
+/*---------------------------------------------------------------------------------*/
+//Ici on s'occupe de Adherent
+ListeAD listenouvAD(void)
+{
+    ListeAD l;
+    l=NULL;
+    return l;
+}
+ListeAD ChargementAdherent (ListeAD l)
+{   
+    MaillonAD f;
+    FILE* flex;
+    flex=fopen("Adherent.txt","r");
+    if(flex == NULL)
+    {
+        printf("Problème d'ouverture du fichier d'emprunt");
+        exit(1);
+    }
+    l=listenouvAD();
+    fscanf(flex,"%d%s%*c",&f.idAdherent,f.civ);
+    fgets(f.nom,12,flex);
+    fscanf(flex,"%s%d%d%d%*c",f.prenom,&f.jour,&f.mois,&f.annees);
+    while(!feof(flex))
+    {
+        l=insertionEnTeteAD(l,f);
+        fscanf(flex,"%d%s%*c",&f.idAdherent,f.civ);
+        fgets(f.nom,12,flex);
+        fscanf(flex,"%s%d%d%d%*c",f.prenom,&f.jour,&f.mois,&f.annees);
+    }
+    fclose(flex);
+    return l;
+}
+ListeAD insertionEnTeteAD(ListeAD l,MaillonAD f)
+{   
+    MaillonAD *m;
+    m = (MaillonAD*)malloc(sizeof(MaillonAD));
+    if (m==NULL)
+    {
+        printf("Pb malloc\n");
+        exit(1);
+    }
+    m->idAdherent = f.idAdherent;
+    strcpy(m->civ,f.civ);
+    strcpy(m->nom,f.nom);
+    strcpy(m->prenom,f.prenom);
+    m->jour = f.jour;
+    m->mois = f.mois;
+    m->annees = f.annees;
+    m->s = l;
+    return m;
+}
+/*-----------------------------------------------------------------------*/
+
+void affichageReservation (ListeReserv r,Jeux *tabJeux[], int tailleLogJeux)
+{   
+    char nomJeuxeux;
+    int choix;
+    int rang;
+    int erreur;
+    int i;
+    int id;
+    printf("Quelle est le jeux que vous souhaitez afficher ?");
+    scanf("%s%*.c",nomJeux);
+    i=rechercheRangAvecLeNomJeux(nomJeux,tabJeux,&erreur,tailleLogJeux)
+    if (*erreur==0)
+    {
+        id=tabJeux[i]->id;
+    }
+
+
+
+
+    while(rechercheID(r,tabJeux,&rang,tailleLogJeux)==0 || choix!=2)
+    {
+        printf("Pas de correspondance trouvée\n");
+        printf("1.Réessayer\t\t2.Retour au menu\n");
+        scanf("%d",choix);
+        printf("Quelle est le jeux que vous souhaitez afficher ?");
+        scanf("%s%*.c",nomJeux);
+    }
+    choixMenu(tabJeux,tailleLogJeux,l,AD);
+}
+
+int rechercheRangAvecLeNomJeux (char nomJeux, Jeux *tabJeux[],int *erreur,int tailleLogJeux)
+{
+    for (int i = 0; i < tailleLogJeux; ++i)
+    {
+        if (strcmp(nomJeux,tabJeux[i]->nom)==0)
+        { 
+        *erreur=0;
+        return i;
+        }
+    }
+    *erreur=1;
+}
+void rechPuisAffichage (ListeReserv r,int tailleLogJeux,char nomJeux, int idJeux)
+{
+    while !(idJeux==r->idJeu)
+    {   
+        if(idJeux==r->idJeu)
+        {
+        printf("%d%d%d%d%d%d\n",r->idResa,r->idAdherent,r->idJeu,r->jour,r->mois,r->annees);
+        r = r->next;
+        }
+    }   
+}
+
 /*Liste insertionEnTete(Liste l, int x)
 {   
     FILE* flot;
