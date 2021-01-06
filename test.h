@@ -34,6 +34,19 @@ typedef struct maillonAD
     struct maillonAD *s;
 }MaillonAD,*ListeAD;
 
+
+typedef struct maillonReserv
+{	
+    int idResa;
+    int idAdherent;
+    int idJeu;
+    int jour;
+    int mois;
+    int annees;
+    struct maillonReserv *next;
+}MaillonReserv, *ListeReserv;
+
+
 typedef enum {faux,vrai} Booleen;
 
 void global (void);
@@ -41,7 +54,7 @@ int test1 (Jeux *tabJeux[]);
 int remplirTab(Jeux *tabJeux[],int taillePhyJeux);
 void afficherJeux( Jeux *tabJeux[], int tailleLogJeux);
 Jeux LireJeux (FILE *flot);
-int choixMenu(Jeux *tabJeux[],int tailleLogJeux,Liste l,ListeAD AD);
+int choixMenu(Jeux *tabJeux[],int tailleLogJeux,Liste l,ListeAD AD,ListeReserv r);
 void affichageMenu(void);
 void triTabJeux(Jeux *tabJeux[], int tailleLogJeux);
 Jeux* copyJeu(Jeux *Jeu);
@@ -70,3 +83,7 @@ ListeAD listenouvAD(void);
 int rechercheRangAvecLeNomJeux (char nomJeux, Jeux *tabJeux[],int *erreur,int tailleLogJeux);
 void affichageReservation (ListeReserv r,Jeux *tabJeux[], int tailleLogJeux);
 void rechPuisAffichage (ListeReserv r,int tailleLogJeux,char nomJeux, int idJeux);
+//Chargement Réservations 
+ListeReserv testReservation (ListeReserv r);
+ListeReserv insertionEnTeteReserv(ListeReserv r,MaillonReserv res);
+ListeReserv listenouvReserv(void);
