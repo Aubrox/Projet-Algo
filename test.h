@@ -37,7 +37,7 @@ typedef struct maillonAD
 
 
 typedef struct maillonReserv
-{   
+{
     int idResa;
     int idAdherent;
     int idJeu;
@@ -91,4 +91,3 @@ ListeReserv insertionEnTeteReserv (ListeReserv r, MaillonReserv res);
 ListeReserv listenouvReserv ( void );
 Booleen videReserv(ListeReserv r);
 //test
-

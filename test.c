@@ -30,32 +30,32 @@ int test1 (Jeux *tabJeux[])
 
 int choixMenu (Jeux *tabJeux[],int tailleLogJeux,Liste l,ListeAD AD,ListeReserv r)
 {
-    int choix;
+	int choix;
     int a;
-    affichageMenu();
-    printf("\n \t Selectionner un bouton du menu :");
-    scanf("%i", &choix);
-    while(choix<1 || choix >7)
-    {
-        affichageMenu();
-        printf("Erreur lors du choix du menu, veuillez reessayer :");
-        scanf("%d",&choix);
-    }
-    switch (choix)
-    {
-    case 1:
+	affichageMenu();
+	printf("\n \t Selectionner un bouton du menu :");
+	scanf("%i", &choix);
+	while(choix<1 || choix >7)
+	{
+		affichageMenu();
+		printf("Erreur lors du choix du menu, veuillez reessayer :");
+		scanf("%d",&choix);
+	}
+	switch (choix)
+	{
+	case 1:
         afficherJeux(tabJeux,tailleLogJeux);
         break;
-    case 2:
+	case 2:
         afficherListe(l,tabJeux,tailleLogJeux,AD);
         break;
     case 3:
         affichageReservation(r,tabJeux,tailleLogJeux);
         break;
-    default:
-        break;
-    }
-    return choix;
+	default:
+		break;
+	}
+	return choix;
 }
 
 void affichageMenu(void)
@@ -419,3 +419,4 @@ Booleen videReserv(ListeReserv r)
         return vrai;
     return faux;
 }
+
