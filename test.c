@@ -413,6 +413,7 @@ int rechPuisAffichage (ListeReserv r,int tailleLogJeux,char nomJeux[], int idJeu
 }
 Booleen videReserv(ListeReserv r)
 {
+
     if(r==NULL)
         return vrai;
     return faux;
