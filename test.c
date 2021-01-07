@@ -19,15 +19,6 @@ void global (void)
     choixMenu(tabJeux,tailleLogJeux,l,AD,r);            //Puis le choix 
 }
 
-int test1 (Jeux *tabJeux[])
-{    
-    int tailleLogJeux;
-    tailleLogJeux=remplirTab(tabJeux,50);
-    triTabJeux(tabJeux,tailleLogJeux);
-    afficherJeux(tabJeux,tailleLogJeux);
-    return tailleLogJeux;
-}
-
 
 // -------------------------------------- Menu et sous menu ------------------------------------------
 
@@ -54,7 +45,8 @@ int choixMenu (Jeux *tabJeux[],int tailleLogJeux,Liste l,ListeAD AD,ListeReserv 
         break;
 	case 2:
         system("cls");
-        afficherListe(l,tabJeux,tailleLogJeux,AD);
+        afficherListeADtempo(AD);
+        // afficherListe(l,tabJeux,tailleLogJeux,AD);
         sousMenu(tabJeux,tailleLogJeux,l,AD,r);
         break;
     case 3:
@@ -107,7 +99,17 @@ void affichageMenu(void)
     printf("\t 7. Quitter l'application \n");
 }
 
-// -----------------------------------------------------------------------------------------------
+
+// ------------------------------------------------ Chargement et tri du fichier jeu en mémoire ----------------------------------------------------------
+
+
+int test1 (Jeux *tabJeux[])
+{    
+    int tailleLogJeux;
+    tailleLogJeux=remplirTab(tabJeux,50);
+    triTabJeux(tabJeux,tailleLogJeux);
+    return tailleLogJeux;
+}
 
 int remplirTab(Jeux *tabJeux[],int taillePhyJeux)
 {    
@@ -125,8 +127,8 @@ int remplirTab(Jeux *tabJeux[],int taillePhyJeux)
     {    
         if (tailleLogJeux==taillePhyJeux)
         {
-        printf("Manque de place dans le tableau de Jeux\n");
-        return -2;
+            printf("Manque de place dans le tableau de Jeux\n");
+            return -2;
         }
         tabJeux[tailleLogJeux] =(Jeux*) malloc(sizeof(Jeux));
         if (tabJeux[tailleLogJeux]==NULL)
@@ -149,7 +151,7 @@ Jeux LireJeux (FILE *flot)
     Jeux a;
     fscanf(flot,"%d",&a.id);
     fscanf(flot,"%s",a.type);
-    fscanf(flot,"%d%*c",&a.nbExemplaire);
+    fscanf(flot,"%d",&a.nbExemplaire);
     fgets(a.nom,29,flot);
     a.nom[strlen(a.nom)-1] = '\0';
     return a;
@@ -195,35 +197,25 @@ Jeux* copyJeu(Jeux *Jeu)
     return copie;
 }
 
+// --------------------------------------------------- Fonction 1 : affichae des jeux disponibles ---------------------------------------------------
+
+
+
 void afficherJeux( Jeux *tabJeux[], int tailleLogJeux)
 {    
-    printf("idJeux\ttypeJeux\tNombres d'exmplaires\tnomJeux\n");
+    printf("\nidJeux\ttypeJeux\t\tNombres d'exmplaires\tnomJeux\n\n");
     for (int i = 0; i < tailleLogJeux; ++i)
     {
-        printf("  %d\t%s\t\t%d\t\t%s\n",tabJeux[i]->id,tabJeux[i]->type,tabJeux[i]->nbExemplaire,tabJeux[i]->nom);
+        printf("%d\t%s\t\t\t%d\t\t\t%s\n",tabJeux[i]->id,tabJeux[i]->type,tabJeux[i]->nbExemplaire,tabJeux[i]->nom);
     }
 }
 
 
 
 
+//------------------------------------------- Création de la liste d'emprunt ---------------------------------------------
 
 
-// Début des fonctions sur les listes 
-
-
-
-Liste listenouv(void)
-{
-    return NULL;
-}
-
-Booleen vide(Liste l)
-{
-    if(l==NULL)
-        return vrai;
-    return faux;
-}
 Liste testEmprunt (Liste l)
 {   
     Maillon f;
@@ -245,6 +237,11 @@ Liste testEmprunt (Liste l)
     return l;
 }
 
+Liste listenouv(void)
+{
+    return NULL;
+}
+
 Liste insertionEnTete(Liste l,Maillon f)
 {   
     Maillon *m;
@@ -263,6 +260,10 @@ Liste insertionEnTete(Liste l,Maillon f)
     m->suiv = l;
     return m;
 }
+
+// ------------------------------- Fonction 2 : affichage de la liste des emprunts en cours ---------------------------------
+
+
 
 void afficherListe(Liste l, Jeux *tabJeux[], int tailleLogJeux,ListeAD AD)
 {   
@@ -294,30 +295,39 @@ void afficherListe(Liste l, Jeux *tabJeux[], int tailleLogJeux,ListeAD AD)
     printf("%d\n", i);
 }
 
+
 int rechercheID (Liste l, Jeux *tabJeux[],int *rang,int tailleLogJeux)
 {
     for (int i = 0; i < tailleLogJeux; ++i)
     {
         if(l->idJeu==tabJeux[i]->id)
         { 
-        *rang=i;
-        return 1;
+            *rang=i;
+            return 1;
         }
     }
     return 0;
 }
 
 
+Booleen vide(Liste l)
+{
+    if(l==NULL)
+        return vrai;
+    return faux;
+}
 
 
-/*---------------------------------------------------------------------------------*/
-//Ici on s'occupe de Adherent
+
+//------------------------------------------- Création de la liste d'adhérents ---------------------------------------------
+
 ListeAD listenouvAD(void)
 {
     ListeAD l;
     l=NULL;
     return l;
 }
+
 ListeAD ChargementAdherent (ListeAD l)
 {   
     MaillonAD f;
@@ -336,12 +346,13 @@ ListeAD ChargementAdherent (ListeAD l)
     {
         l=insertionEnTeteAD(l,f);
         fscanf(flex,"%d%s%*c",&f.idAdherent,f.civ);
-        fgets(f.nom,12,flex);
+        fgets(f.nom,30,flex);
         fscanf(flex,"%s%d%d%d%*c",f.prenom,&f.jour,&f.mois,&f.annees);
     }
     fclose(flex);
     return l;
 }
+
 ListeAD insertionEnTeteAD(ListeAD l,MaillonAD f)
 {   
     MaillonAD *m;
@@ -360,6 +371,16 @@ ListeAD insertionEnTeteAD(ListeAD l,MaillonAD f)
     m->annees = f.annees;
     m->s = l;
     return m;
+}
+
+
+void afficherListeADtempo(ListeAD AD)
+{
+    while (AD!=NULL)
+    {   
+        printf("%d %s %s %s %d/%d/%d\t\n",AD->idAdherent,AD->civ,AD->nom,AD->prenom,AD->jour,AD->mois,AD->annees);
+        AD = AD->s;
+    }
 }
 
 //-------------------------------Code Réservation---------------------------------------//

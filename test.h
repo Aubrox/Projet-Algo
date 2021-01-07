@@ -88,4 +88,7 @@ ListeReserv testReservation (ListeReserv r);
 ListeReserv insertionEnTeteReserv (ListeReserv r, MaillonReserv res);
 ListeReserv listenouvReserv ( void );
 Booleen videReserv(ListeReserv r);
+
+
 //test
+void afficherListeADtempo(ListeAD AD);
