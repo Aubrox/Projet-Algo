@@ -12,12 +12,13 @@ void global (void)
     ListeAD AD;
     AD=ChargementAdherent(AD);     //Chargement tableau des adherents
     /*----------------------------------------------------------------------------*/           
-                                    //Chargement Tableau des reservations
+                                   // Chargement Tableau des reservations
     ListeReserv r;
     r=testReservation(r);
     /*----------------------------------------------------------------------------*/
     choixMenu(tabJeux,tailleLogJeux,l,AD,r);            //Puis le choix 
 }
+
 int test1 (Jeux *tabJeux[])
 {    
     int tailleLogJeux;
@@ -26,6 +27,9 @@ int test1 (Jeux *tabJeux[])
     afficherJeux(tabJeux,tailleLogJeux);
     return tailleLogJeux;
 }
+
+
+// -------------------------------------- Menu et sous menu ------------------------------------------
 
 
 int choixMenu (Jeux *tabJeux[],int tailleLogJeux,Liste l,ListeAD AD,ListeReserv r)
@@ -44,18 +48,50 @@ int choixMenu (Jeux *tabJeux[],int tailleLogJeux,Liste l,ListeAD AD,ListeReserv 
 	switch (choix)
 	{
 	case 1:
+        system("cls");
         afficherJeux(tabJeux,tailleLogJeux);
+        sousMenu(tabJeux,tailleLogJeux,l,AD,r);
         break;
 	case 2:
+        system("cls");
         afficherListe(l,tabJeux,tailleLogJeux,AD);
+        sousMenu(tabJeux,tailleLogJeux,l,AD,r);
         break;
     case 3:
+        system("cls");
         affichageReservation(r,tabJeux,tailleLogJeux);
+        sousMenu(tabJeux,tailleLogJeux,l,AD,r);
+        break;
+    case 7:
         break;
 	default:
 		break;
 	}
 	return choix;
+}
+
+void sousMenu(Jeux *tabJeux[],int tailleLogJeux,Liste l,ListeAD AD,ListeReserv r)
+{
+    int choix2;
+    printf("\nSelectionner un bouton du menu :");
+    printf("\n\n1. Retour au menu\t\t2. Quitter\n");
+    scanf("%d", &choix2);
+    while(choix2<1 || choix2 >3)
+    {
+        affichageMenu();
+        printf("Erreur lors du choix du menu, veuillez reessayer :");
+        scanf("%d",&choix2);
+    }
+    switch (choix2)
+    {
+    case 1:
+        choixMenu(tabJeux,tailleLogJeux,l,AD,r);
+        break;
+    case 2:
+        break;
+    default:
+        break;
+    }
 }
 
 void affichageMenu(void)
@@ -70,6 +106,8 @@ void affichageMenu(void)
     printf("\t 6. Annulation d'une reservation \n");
     printf("\t 7. Quitter l'application \n");
 }
+
+// -----------------------------------------------------------------------------------------------
 
 int remplirTab(Jeux *tabJeux[],int taillePhyJeux)
 {    
@@ -131,10 +169,20 @@ void triTabJeux(Jeux *tabJeux[], int tailleLogJeux)
                 tmp=copyJeu(tabJeux[i]);
                 tabJeux[i]=tabJeux[j];
                 tabJeux[j]=tmp;
+            } 
+            if((strcmp(tabJeux[j]->type, tabJeux[i]->type))==0)
+            {
+                if((strcmp(tabJeux[j]->nom, tabJeux[i]->nom))<0)
+                {
+                    tmp=copyJeu(tabJeux[i]);
+                    tabJeux[i]=tabJeux[j];
+                    tabJeux[j]=tmp;
+                }
             }
         }
     }
 }
+
 
 Jeux* copyJeu(Jeux *Jeu)
 {
@@ -152,17 +200,24 @@ void afficherJeux( Jeux *tabJeux[], int tailleLogJeux)
     printf("idJeux\ttypeJeux\tNombres d'exmplaires\tnomJeux\n");
     for (int i = 0; i < tailleLogJeux; ++i)
     {
-        printf("  %d\t%s\t\t\t%d\t\t%s\n",tabJeux[i]->id,tabJeux[i]->type,tabJeux[i]->nbExemplaire,tabJeux[i]->nom);
+        printf("  %d\t%s\t\t%d\t\t%s\n",tabJeux[i]->id,tabJeux[i]->type,tabJeux[i]->nbExemplaire,tabJeux[i]->nom);
     }
 }
 
 
+
+
+
+
 // Début des fonctions sur les listes 
+
+
 
 Liste listenouv(void)
 {
     return NULL;
 }
+
 Booleen vide(Liste l)
 {
     if(l==NULL)
@@ -211,6 +266,7 @@ Liste insertionEnTete(Liste l,Maillon f)
 
 void afficherListe(Liste l, Jeux *tabJeux[], int tailleLogJeux,ListeAD AD)
 {   
+    int i=0;
     int trouve;
     int rang;
     printf("Nom du jeu\tId de l'emprunteur\tDate de l'emprunteur\n");
@@ -229,12 +285,15 @@ void afficherListe(Liste l, Jeux *tabJeux[], int tailleLogJeux,ListeAD AD)
             printf("%d%s%s%s%d/%d/%d\t",AD->idAdherent,AD->civ,AD->nom,AD->prenom,AD->jour,AD->mois,AD->annees);
             printf("%d/%d/%d\t\n", l->jour,l->mois,l->annees);  
         }           
+        i++;
         printf("\n");
         l = l->suiv;
         AD = AD->s;
         trouve=rechercheID(l,tabJeux,&rang,tailleLogJeux);
     }
+    printf("%d\n", i);
 }
+
 int rechercheID (Liste l, Jeux *tabJeux[],int *rang,int tailleLogJeux)
 {
     for (int i = 0; i < tailleLogJeux; ++i)
@@ -247,6 +306,8 @@ int rechercheID (Liste l, Jeux *tabJeux[],int *rang,int tailleLogJeux)
     }
     return 0;
 }
+
+
 
 
 /*---------------------------------------------------------------------------------*/
@@ -351,6 +412,7 @@ ListeReserv insertionEnTeteReserv(ListeReserv r,MaillonReserv res)
     m->next = r;
     return m;
 }
+
 void affichageReservation (ListeReserv r,Jeux *tabJeux[], int tailleLogJeux)
 {   
     char nomJeux[20];
@@ -412,6 +474,7 @@ int rechPuisAffichage (ListeReserv r,int tailleLogJeux,char nomJeux[], int idJeu
     else
     printf("Vous avez un total %d reservation pour le jeu %s\n",i,nomJeux);   
 }
+
 Booleen videReserv(ListeReserv r)
 {
 
