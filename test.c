@@ -26,9 +26,11 @@ int test1 (Jeux *tabJeux[])
     return tailleLogJeux;
 }
 
-int choixMenu (Jeux *tabJeux[],int tailleLogJeux,Liste l,ListeAD AD, ListeReserv r)
+
+int choixMenu (Jeux *tabJeux[],int tailleLogJeux,Liste l,ListeAD AD,ListeReserv r)
 {
 	int choix;
+    int a;
 	affichageMenu();
 	printf("\n \t Selectionner un bouton du menu :");
 	scanf("%i", &choix);
@@ -47,7 +49,8 @@ int choixMenu (Jeux *tabJeux[],int tailleLogJeux,Liste l,ListeAD AD, ListeReserv
         afficherListe(l,tabJeux,tailleLogJeux,AD);
         break;
     case 3:
-        testReservation (r);
+        affichageReservation(r,tabJeux,tailleLogJeux);
+        break;
 	default:
 		break;
 	}
@@ -296,7 +299,9 @@ ListeAD insertionEnTeteAD(ListeAD l,MaillonAD f)
     m->s = l;
     return m;
 }
+
 //-------------------------------Code Réservation---------------------------------------//
+
 
 ListeReserv listenouvReserv(void)
 {
@@ -345,93 +350,71 @@ ListeReserv insertionEnTeteReserv(ListeReserv r,MaillonReserv res)
     m->next = r;
     return m;
 }
-
- 
-/*
 void affichageReservation (ListeReserv r,Jeux *tabJeux[], int tailleLogJeux)
 {   
-    char nomJeuxeux;
-    int choix;
-    int rang;
+    char nomJeux[20];
     int erreur;
     int i;
     int id;
-    printf("Quelle est le jeux que vous souhaitez afficher ?");
-    scanf("%s%*.c",nomJeux);
-    i=rechercheRangAvecLeNomJeux(nomJeux,tabJeux,&erreur,tailleLogJeux)
-    if (*erreur==0)
+    int c;
+    printf("Quelle est le jeux que vous souhaitez afficher ?\n");
+    c = getchar();
+    fgets(nomJeux,20,stdin);
+    nomJeux[strlen(nomJeux)-1] = '\0';
+    i=rechercheRangAvecLeNomJeux(nomJeux,tabJeux,&erreur,tailleLogJeux);
+    if (erreur==0)
     {
         id=tabJeux[i]->id;
+        rechPuisAffichage(r,tailleLogJeux,nomJeux,id,erreur);
     }
-
-
-
-
- while(rechercheID(r,tabJeux,&rang,tailleLogJeux)==0 || choix!=2)
-    {
-        printf("Pas de correspondance trouvée\n");
-        printf("1.Réessayer\t\t2.Retour au menu\n");
-        scanf("%d",choix);
-        printf("Quelle est le jeux que vous souhaitez afficher ?");
-        scanf("%s%*.c",nomJeux);
+    else
+    {   
+        printf("\n");
+        printf("Le jeux %s n'est pas reference dans les jeux dont dispose la ludotheque !\n\n",nomJeux);
     }
-    choixMenu(tabJeux,tailleLogJeux,l,AD);
 }
 
-int rechercheRangAvecLeNomJeux (char nomJeux, Jeux *tabJeux[],int *erreur,int tailleLogJeux)
-{
-    for (int i = 0; i < tailleLogJeux; ++i)
+int rechercheRangAvecLeNomJeux (char nomJeux[], Jeux *tabJeux[],int *erreur,int tailleLogJeux)
+{   
+    int i=0;
+    while(i<tailleLogJeux)
     {
-        if (strcmp(nomJeux,tabJeux[i]->nom)==0)
-        { 
+    if (strcmp(nomJeux,tabJeux[i]->nom)==0)
+        {
         *erreur=0;
         return i;
         }
+    i++;
     }
     *erreur=1;
+    return i;
 }
-void rechPuisAffichage (ListeReserv r,int tailleLogJeux,char nomJeux, int idJeux)
-{
-    while !(idJeux==r->idJeu)
+
+int rechPuisAffichage (ListeReserv r,int tailleLogJeux,char nomJeux[], int idJeux,int erreur)
+{   
+    int i=0;
+    printf("\n");
+    while (!videReserv(r))
     {   
         if(idJeux==r->idJeu)
-        {
-        printf("%d%d%d%d%d%d\n",r->idResa,r->idAdherent,r->idJeu,r->jour,r->mois,r->annees);
-        r = r->next;
+        {   
+            printf("idResa\tidAdherent\tidJeux\tJJ/MM/AAAA \n\n");
+            printf("%d\t%d\t\t%d\t%d/%d/%d\n\n",r->idResa,r->idAdherent,r->idJeu,r->jour,r->mois,r->annees); 
+            i++;
         }
-    }   
-}
-
-/*Liste insertionEnTete(Liste l, int x)
-
-{   
-    FILE* flot;
-    
-    Maillon *m;
-    m = (Maillon*)malloc(sizeof(maillon));
-    if (m==NULL)
-    {
-        printf("Pb malloc\n");
-        exit(1);
+            r = r->next;
     }
-    m->idEmprunt = x;
-    m->idAdherent = x;
-    m->idJeu = x;
-    m->dateEmp = x;
-    m->suiv = l;
-    return m;
+    if (i==0)
+    {
+    printf("%s n'est pas reserver par personne !\n\n",nomJeux);
+    }
+    else
+    printf("Vous avez un total %d reservation pour le jeu %s\n",i,nomJeux);   
 }
-
-
-/*Liste inserer(Liste l, int x)
+Booleen videReserv(ListeReserv r)
 {
-    if(l==NULL)
-        return insertionEnTete(l, x); 
-    if(x < l->v)
-        return insertionEnTete(l, x);
-    if(x==l->v)
-        return l;
-    l->suiv = inserer(l->suiv, x);
-    return l;
+
+    if(r==NULL)
+        return vrai;
+    return faux;
 }
-*/
