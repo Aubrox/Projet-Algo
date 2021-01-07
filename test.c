@@ -10,11 +10,10 @@ void global (void)
     /*----------------------------------------------------------------------------*/
     ListeAD AD;
     AD=ChargementAdherent(AD);     //Chargement tableau des adherents
-    /*----------------------------------------------------------------------------*/
+    /*----------------------------------------------------------------------------*/           
                                     //Chargement Tableau des reservations
     ListeReserv r;
     r=testReservation(r);
-
     /*----------------------------------------------------------------------------*/
     choixMenu(tabJeux,tailleLogJeux,l,AD,r);            //Puis le choix 
 }
@@ -26,6 +25,7 @@ int test1 (Jeux *tabJeux[])
     afficherJeux(tabJeux,tailleLogJeux);
     return tailleLogJeux;
 }
+
 
 int choixMenu (Jeux *tabJeux[],int tailleLogJeux,Liste l,ListeAD AD,ListeReserv r)
 {
@@ -220,7 +220,7 @@ void afficherListe(Liste l, Jeux *tabJeux[], int tailleLogJeux,ListeAD AD)
         {    
             printf("%s\t",tabJeux[rang]->nom);
             printf("%d%s%s%s%d/%d/%d\t",AD->idAdherent,AD->civ,AD->nom,AD->prenom,AD->jour,AD->mois,AD->annees);
-            printf("%d/%d/%d\t\n", l->jour,l->mois,l->annees);    // FAUT FAIRE ADERENT POUR TOUS Y METRE DANS LE FIAK
+            printf("%d/%d/%d\t\n", l->jour,l->mois,l->annees);    // FAUT FAIRE ADHERENT 
         }
         else
         {
@@ -299,33 +299,35 @@ ListeAD insertionEnTeteAD(ListeAD l,MaillonAD f)
     m->s = l;
     return m;
 }
-/*-----------------------------------------------------------------------*/
-// RESERVATION
+
+//-------------------------------Code Réservation---------------------------------------//
+
+
 ListeReserv listenouvReserv(void)
 {
-    ListeReserv r;
-    r=NULL;
-    return r;
+    ListeReserv l;
+    l=NULL;
+    return l;
 }
 
 ListeReserv testReservation (ListeReserv r)
 {   
     MaillonReserv res;
-    FILE* flox;
-    flox=fopen("Reservation.txt","r");
-    if(flox == NULL)
+    FILE* flux;
+    flux=fopen("Reservation.txt","r");
+    if(flux == NULL)
     {
         printf("Problème d'ouverture du fichier réservation");
         exit(1);
     }
     r=listenouvReserv();
-    fscanf(flox,"%d%d%d%d%d%d%*c",&res.idResa,&res.idAdherent,&res.idJeu,&res.jour,&res.mois,&res.annees);
-    while(!feof(flox))
+    fscanf(flux,"%d%d%d%d%d%d%*c",&res.idResa,&res.idAdherent,&res.idJeu,&res.jour,&res.mois,&res.annees);
+    while(!feof(flux))
     {
         r=insertionEnTeteReserv(r,res);
-        fscanf(flox,"%d%d%d%d%d%d%*c",&res.idResa,&res.idAdherent,&res.idJeu,&res.jour,&res.mois,&res.annees);
+        fscanf(flux,"%d%d%d%d%d%d%*c",&res.idResa,&res.idAdherent,&res.idJeu,&res.jour,&res.mois,&res.annees);
     }
-    fclose(flox);
+    fclose(flux);
     printf("%d",res.idAdherent);
     return r;
 }
@@ -348,7 +350,6 @@ ListeReserv insertionEnTeteReserv(ListeReserv r,MaillonReserv res)
     m->next = r;
     return m;
 }
-
 void affichageReservation (ListeReserv r,Jeux *tabJeux[], int tailleLogJeux)
 {   
     char nomJeux[20];
@@ -415,48 +416,4 @@ Booleen videReserv(ListeReserv r)
     if(r==NULL)
         return vrai;
     return faux;
-
 }
-
-/*Liste insertionEnTete(Liste l, int x)
-{   
-    FILE* flot;
-    
-    Maillon *m;
-    m = (Maillon*)malloc(sizeof(maillon));
-    if (m==NULL)
-    {
-        printf("Pb malloc\n");
-        exit(1);
-    }
-    m->idEmprunt = x;
-    m->idAdherent = x;
-    m->idJeu = x;
-    m->dateEmp = x;
-    m->suiv = l;
-    return m;
-}
-
-
-/*Liste inserer(Liste l, int x)
-{
-    if(l==NULL)
-        return insertionEnTete(l, x); 
-    if(x < l->v)
-        return insertionEnTete(l, x);
-    if(x==l->v)
-        return l;
-    l->suiv = inserer(l->suiv, x);
-    return l;
-}
-
-
-    while(rechercheID(r,tabJeux,&rang,tailleLogJeux)==0 || choix!=2)
-    {
-        printf("Pas de correspondance trouvée\n");
-        printf("1.Réessayer\t\t2.Retour au menu\n");
-        scanf("%d",choix);
-        printf("Quelle est le jeux que vous souhaitez afficher ?");
-        scanf("%s%*.c",nomJeux);
-    }
-*/

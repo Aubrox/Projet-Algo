@@ -34,16 +34,19 @@ typedef struct maillonAD
     struct maillonAD *s;
 }MaillonAD,*ListeAD;
 
-typedef  struct maillonReserv
-{   
+
+
+typedef struct maillonReserv
+{	
     int idResa;
     int idAdherent;
     int idJeu;
     int jour;
     int mois;
     int annees;
-    struct maillonReserv * next;
-} MaillonReserv, * ListeReserv;
+    struct maillonReserv *next;
+}MaillonReserv, *ListeReserv;
+
 
 typedef enum {faux,vrai} Booleen;
 
@@ -88,3 +91,5 @@ ListeReserv insertionEnTeteReserv (ListeReserv r, MaillonReserv res);
 ListeReserv listenouvReserv ( void );
 Booleen videReserv(ListeReserv r);
 //test
+
+
