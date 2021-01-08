@@ -266,14 +266,13 @@ Liste insertionEnTete(Liste l,Maillon f)
 
 
 void afficherListe(Liste l, Jeux *tabJeux[], int tailleLogJeux,ListeAD AD)
-{   
-    int i=0;
+{
     int trouve;
     int rang;
     printf("Nom du jeu\tId de l'emprunteur\tDate de l'emprunteur\n");
-    trouve=rechercheID(l,tabJeux,&rang,tailleLogJeux);
     while (!vide(l))
     {   
+        trouve=rechercheID(l,tabJeux,&rang,tailleLogJeux);
         if (trouve==1)
         {    
             printf("%s\t",tabJeux[rang]->nom);
@@ -285,14 +284,11 @@ void afficherListe(Liste l, Jeux *tabJeux[], int tailleLogJeux,ListeAD AD)
             printf("Pas de nom correspondant\t");
             printf("%d %02d/%02d/%d %s%s\t",AD->idAdherent,AD->jour,AD->mois,AD->annees,AD->civ,AD->prenomNom);
             printf("%d/%d/%d\t\n", l->jour,l->mois,l->annees); 
-        }           
-        i++;
+        }
         printf("\n");
         l = l->suiv;
         AD = AD->s;
-        trouve=rechercheID(l,tabJeux,&rang,tailleLogJeux);
     }
-    printf("%d\n", i);
 }
 
 
