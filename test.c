@@ -136,7 +136,6 @@ void afficherJeux( Jeux *tabJeux[], int tailleLogJeux)
     printf("idJeux\ttypeJeux\tNombres d'exmplaires\tnomJeux\n");
     for (int i = 0; i < tailleLogJeux; ++i)
     {
-        printf("  %d\t%s\t\t\t%d\t\t%s\n",tabJeux[i]->id,tabJeux[i]->type,tabJeux[i]->nbExemplaire,tabJeux[i]->nom);
+        printf("%d\t%s\t%d\t\t\t%s\n",tabJeux[i]->id,tabJeux[i]->type,tabJeux[i]->nbExemplaire,tabJeux[i]->nom);
     }
 }
-
