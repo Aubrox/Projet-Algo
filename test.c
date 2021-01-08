@@ -203,10 +203,10 @@ Jeux* copyJeu(Jeux *Jeu)
 
 void afficherJeux( Jeux *tabJeux[], int tailleLogJeux)
 {    
-    printf("\nidJeux\ttypeJeux\t\tNombres d'exmplaires\tnomJeux\n\n");
+    printf("\nidJeux\tNombre d'exemplaire(s)\t\tNombres d'exmplaires\t\tNom du Jeux\n\n");
     for (int i = 0; i < tailleLogJeux; ++i)
     {
-        printf("%d\t%s\t\t\t%d\t\t\t%s\n",tabJeux[i]->id,tabJeux[i]->type,tabJeux[i]->nbExemplaire,tabJeux[i]->nom);
+        printf("%d\t%d\t\t\t\t%s\t\t\t%s\n",tabJeux[i]->id,tabJeux[i]->nbExemplaire,tabJeux[i]->nom,tabJeux[i]->type);
     }
 }
 
