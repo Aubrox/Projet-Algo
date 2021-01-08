@@ -59,7 +59,7 @@ int choixMenu (Jeux *tabJeux[],int tailleLogJeux,Liste l,ListeAD AD,ListeReserv 
 void affichageMenu(void);
 void triTabJeux(Jeux *tabJeux[], int tailleLogJeux);
 Jeux* copyJeu(Jeux *Jeu);
-
+void sousMenu(Jeux *tabJeux[],int tailleLogJeux,Liste l,ListeAD AD,ListeReserv r);
 
 // LISTE
 Liste listenouv(void);
@@ -90,6 +90,12 @@ ListeReserv testReservation (ListeReserv r);
 ListeReserv insertionEnTeteReserv (ListeReserv r, MaillonReserv res);
 ListeReserv listenouvReserv ( void );
 Booleen videReserv(ListeReserv r);
-//test
 
 
+
+//retour d'un jeux
+void retourJeux (ListeAD AD,ListeReserv R,Liste l,Jeux *tabJeux[],int tailleLogJeux);
+void ChargementInfo (char type[]);
+Booleen videAD(ListeAD AD);
+int comparaison (char Nom[],char Prenom[],ListeAD AD);
+int retourIDv2(char Nom[],char Prenom[],ListeAD AD,int *erreur,int i,int *idBack);

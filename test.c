@@ -43,18 +43,51 @@ int choixMenu (Jeux *tabJeux[],int tailleLogJeux,Liste l,ListeAD AD,ListeReserv 
 	switch (choix)
 	{
 	case 1:
+        system("cls");
         afficherJeux(tabJeux,tailleLogJeux);
+        sousMenu(tabJeux,tailleLogJeux,l,AD,r);
         break;
 	case 2:
+        system("cls");
         afficherListe(l,tabJeux,tailleLogJeux,AD);
+        sousMenu(tabJeux,tailleLogJeux,l,AD,r);
         break;
     case 3:
+        system("cls");
         affichageReservation(r,tabJeux,tailleLogJeux);
+        sousMenu(tabJeux,tailleLogJeux,l,AD,r);
         break;
+    case 4:
+        system("cls");
+        retourJeux(AD,r,l,tabJeux,tailleLogJeux);
+        sousMenu(tabJeux,tailleLogJeux,l,AD,r);
 	default:
 		break;
 	}
 	return choix;
+}
+void sousMenu(Jeux *tabJeux[],int tailleLogJeux,Liste l,ListeAD AD,ListeReserv r)
+{
+    int choix2;
+    printf("\nSelectionner un bouton du menu :");
+    printf("\n\n1. Retour au menu\t\t2. Quiter\n");
+    scanf("%d", &choix2);
+    while(choix2<1 || choix2 >3)
+    {
+        affichageMenu();
+        printf("Erreur lors du choix du menu, veuillez reessayer :");
+        scanf("%d",&choix2);
+    }
+    switch (choix2)
+    {
+    case 1:
+        choixMenu(tabJeux,tailleLogJeux,l,AD,r);
+        break;
+    case 2:
+        break;
+    default:
+        break;
+    }
 }
 
 void affichageMenu(void)
@@ -219,13 +252,13 @@ void afficherListe(Liste l, Jeux *tabJeux[], int tailleLogJeux,ListeAD AD)
         if (trouve==1)
         {    
             printf("%s\t",tabJeux[rang]->nom);
-            printf("%d%s%s%s%d/%d/%d\t",AD->idAdherent,AD->civ,AD->nom,AD->prenom,AD->jour,AD->mois,AD->annees);
-            printf("%d/%d/%d\t\n", l->jour,l->mois,l->annees);    // FAUT FAIRE ADHERENT 
+            printf("%d%s%s%s%d/%d/%d",AD->idAdherent,AD->civ,AD->nom,AD->prenom,AD->jour,AD->mois,AD->annees);
+            printf("%d/%d/%d\t\n", l->jour,l->mois,l->annees);    
         }
         else
         {
             printf("Pas de nom correspondant\t");
-            printf("%d%s%s%s%d/%d/%d\t",AD->idAdherent,AD->civ,AD->nom,AD->prenom,AD->jour,AD->mois,AD->annees);
+            printf("%d%s%s%s%d/%d/%d",AD->idAdherent,AD->civ,AD->nom,AD->prenom,AD->jour,AD->mois,AD->annees);
             printf("%d/%d/%d\t\n", l->jour,l->mois,l->annees);  
         }           
         printf("\n");
@@ -416,4 +449,86 @@ Booleen videReserv(ListeReserv r)
     if(r==NULL)
         return vrai;
     return faux;
+}
+
+/*-----------------------------------------------------------------------------------------------------*/
+//5. Retour d'un jeu
+
+void retourJeux (ListeAD AD,ListeReserv r,Liste l,Jeux *tabJeux[],int tailleLogJeux)
+{   
+    int c;
+    int idBack;
+    int erreur;
+    int i;
+    char jeuxBack[20],Nom[20],Prenom[20];
+    printf("Quelle est le jeux que vous voulez rendre ?\n");
+    c=getchar();
+    ChargementInfo(jeuxBack);
+    printf("Donnez votre prenom :\n");    
+    scanf("%s",Prenom);
+    printf("Donnez votre nom (en MAJUSCULE):\n");
+    ChargementInfo(Nom);
+    i=retourIDv2(Nom,Prenom,AD,&erreur,i,&idBack); 
+    if(erreur==2)
+    {
+        printf("Désolé,nous avons %d personne au même nom et prenom que vous veuillez renseignez votre idAdherent",i);
+        scanf("%d",idBack);
+    }
+    if (erreur=1)
+    {
+        printf("%s %s ne correspond pas a un adherent de la ludotheque\n",Nom,Prenom);
+        sousMenu(tabJeux,tailleLogJeux,l,AD,r);
+    }
+    printf("%d\n",idBack);
+}
+void ChargementInfo (char type[])
+{   
+    int c;
+    c=getchar();
+    fgets(type,11,stdin);
+    type[strlen(type)-1] = '\0';
+}
+int retourIDv2(char Nom[],char Prenom[],ListeAD AD,int *erreur,int i,int *idBack)
+{   
+    i=0;
+    while(!videAD(AD))
+    {
+    printf("%s\n",Nom);
+    printf("%s\n",AD->nom);
+    printf("%d\n%d\n",strcmp(Nom,AD->nom),strcmp(AD->prenom,Prenom));
+        if(strcoll(Nom,AD->nom)==0 && strcoll(AD->prenom,Prenom)==0)
+        {
+            *erreur=0;
+            *idBack=AD->idAdherent;
+            i++;
+        }
+        AD=AD->s;
+    }
+    if(i>1)
+     {
+        *erreur=2;
+     }
+    printf("%d\n",i);
+    if(i=0)
+    {
+        *erreur=1;
+    }
+    return i;
+}
+Booleen videAD(ListeAD AD)
+{
+    if(AD==NULL)
+        return vrai;
+    return faux;
+}
+int comparaison (char Nom[],char Prenom[],ListeAD AD)     // Je suis obligé de faire l'équivalent de strcmp() car bizarrement elle ne veut pas marché cette fois.
+{   
+    int i=0;
+    for (int i = 0; i < 20; ++i)
+    {
+        if(Nom[i]==AD->nom[i] && Prenom[i]==AD->prenom[i])
+        printf("%s\n",AD->nom);
+        return 1;
+    }
+    return 0;
 }
