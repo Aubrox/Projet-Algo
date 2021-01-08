@@ -58,9 +58,15 @@ int choixMenu (Jeux *tabJeux[],int tailleLogJeux,Liste l,ListeAD AD,ListeReserv 
         sousMenu(tabJeux,tailleLogJeux,l,AD,r);
         break;
     case 4:
+    /*
         system("cls");
         retourJeux(AD,r,l,tabJeux,tailleLogJeux);
         sousMenu(tabJeux,tailleLogJeux,l,AD,r);
+    */
+    case 5:
+        system("cls");
+        affichageNbReservation (r,tabJeux, tailleLogJeux);
+        break;
 	default:
 		break;
 	}
@@ -591,6 +597,8 @@ ListeReserv supprimerEnTete(ListeReserv l)
     free(m);
     return l;
 }
+
+
 Liste ajoutEmprunt(Liste l,int idADnew,int idJeux)
 {
     while(!vide(l))
@@ -603,3 +611,94 @@ Liste ajoutEmprunt(Liste l,int idADnew,int idJeux)
     l=l->suiv;
     }
 }
+
+
+
+//----------------------------Annulation Reservation ------------------------------------------//
+// Demander le prenom Nom de la personne, rechercher son ID Adherent via son nom puis rechercher la/les reservation(s) en cours en affichant les jeux reserver puis lui demander si il souhaite réellement l'annuler//
+void affichageNbReservation (Jeux *tabJeux[], int tailleLogJeux,ListeAD AD,Liste l,ListeReserv r)
+{
+    int i, idAdherent, erreur, nbReservation;
+    char nomPrenom[20], nomJeu[20];
+    char c, choix;
+    int saisieID;
+    printf("Saississez votre prenom et votre nom en majuscule : \n");
+    c=getchar();
+    fgets(nomPrenom,20,stdin);
+    nomPrenom[strlen(nomPrenom)-1] = '\0';
+    rechercheIdAdherent(nomPrenom, AD, &erreur, &saisieID);
+    if(erreur=1)
+    {
+        printf("%s ne correspond pas a un adherent de la ludotheque\n",nomPrenom);
+        sousMenu(tabJeux,tailleLogJeux,l,AD,r); 
+    }
+    if(erreur=2)
+    {
+        printf("Il existe deux personne possédant le même prenom et nom que vous, veuillez renseignez votre ID adhérent s'il vous plait :\n");
+        scanf("%d", saisieID);
+    }
+        printf("Voici vos reservations en cours :\n");
+        showReserv(tabJeux, AD);
+        nbReservation=nbReserv(AD, idAdherent);
+        if(nbReservation=1)
+        {
+            printf("Voulez vous vraiment supprimer cette réservation ?(o/n)");
+            scanf("%c", choix);
+            if(choix='o')
+                supprimerReservation();
+            else 
+                choixMenu(tabJeux, tailleLogJeux, l,AD,r);
+            
+        }
+        if(nbReservation>1)
+        {
+            printf("Saississez le jeu dont vous voulez supprimer la réservation ");
+            scanf("%s", nomJeu);
+            supprimerReservation();
+        }
+        
+    }
+}
+
+int nbReserv(ListeAD AD, int idAdherent)
+{
+    int nbReservation=0;
+    if(AD->s==NULL)
+        return nbReservation;
+ 
+    if (idAdherent==AD->idAdherent)
+        nbReservation++;
+    return showReserv(AD->s, idAdherent);
+}
+
+void rechercheIdAdherent(char nomPrenom[],ListeAD AD,int *erreur,int *saisieID)
+{   
+    *erreur=0;
+    while(!videAD(AD))
+    {
+    if(strcmp(nomPrenom,AD->prenomNom)==0)
+        {
+        *saisieID=AD->idAdherent;
+        *erreur=*erreur+1;
+        }
+    AD=AD->s;
+    }
+}
+
+void showReserv(Jeux *tabJeux [], ListeAD AD,)
+{
+
+}
+
+void rechJeuCorrespondant(Jeux *tabJeux[], ListeAD AD, *saisieID)
+{
+    if(strcmp(&saisieID))
+
+
+
+}
+
+// NOTE POUR LE PROCHAIN MEC QUI VIENT : Il manque a faire : rechJeuCorrespondant qui consiste a : via l'ID adherent, afficher le nom du jeu correspondant ( faire le pont entre LISTE AD et tabJeux)
+// Supprimer la réservation correspondante à l'ID 
+// Mettre toute les fct dans le .h 
+// Je (Bastien) continue ce travail mais je galère un peu je me mets des notes a moi même allez merci 

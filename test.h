@@ -92,7 +92,7 @@ ListeReserv listenouvReserv ( void );
 Booleen videReserv(ListeReserv r);
 
 
-
+/*
 //retour d'un jeux
 void retourJeux (ListeAD AD,ListeReserv R,Liste l,Jeux *tabJeux[],int tailleLogJeux);
 Booleen videAD(ListeAD AD);
@@ -105,4 +105,8 @@ int rechercheIDv4 (char nomJeux[], Jeux *tabJeux[],int tailleLogJeux);
 int affectationReserv(ListeReserv r,int id,int *a);
 ListeReserv supprimer(ListeReserv l, int x);
 ListeReserv supprimerEnTete(ListeReserv l);
-Liste ajoutEmprunt(Liste l,int idADnew,int idJeux);
+Liste ajoutEmprunt(Liste l,int idADnew,int idJeux); */
+
+
+//Annulation Reservation 
+void affichageNbReservation (Jeux *tabJeux[], int tailleLogJeux,ListeAD AD, Liste l,ListeReserv r);
