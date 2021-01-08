@@ -446,6 +446,7 @@ int rechPuisAffichage (ListeReserv r,int tailleLogJeux,char nomJeux[], int idJeu
 }
 Booleen videReserv(ListeReserv r)
 {
+
     if(r==NULL)
         return vrai;
     return faux;
@@ -532,3 +533,4 @@ int comparaison (char Nom[],char Prenom[],ListeAD AD)     // Je suis obligé de 
     }
     return 0;
 }
+
