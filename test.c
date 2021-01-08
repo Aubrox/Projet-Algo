@@ -243,6 +243,7 @@ Liste insertionEnTete(Liste l,Maillon f)
 
 void afficherListe(Liste l, Jeux *tabJeux[], int tailleLogJeux,ListeAD AD)
 {   
+    int i=0;
     int trouve;
     int rang;
     printf("Nom du jeu\tId de l'emprunteur\tDate de l'emprunteur\n");
@@ -252,20 +253,22 @@ void afficherListe(Liste l, Jeux *tabJeux[], int tailleLogJeux,ListeAD AD)
         if (trouve==1)
         {    
             printf("%s\t",tabJeux[rang]->nom);
-            printf("%d%s%s%s%d/%d/%d",AD->idAdherent,AD->civ,AD->nom,AD->prenom,AD->jour,AD->mois,AD->annees);
-            printf("%d/%d/%d\t\n", l->jour,l->mois,l->annees);    
+            printf("%d %02d/%02d/%d%s%s\t",AD->idAdherent,AD->jour,AD->mois,AD->annees,AD->civ,AD->prenomNom);
+            printf("%d/%d/%d\t\n", l->jour,l->mois,l->annees);
         }
         else
         {
             printf("Pas de nom correspondant\t");
-            printf("%d%s%s%s%d/%d/%d",AD->idAdherent,AD->civ,AD->nom,AD->prenom,AD->jour,AD->mois,AD->annees);
-            printf("%d/%d/%d\t\n", l->jour,l->mois,l->annees);  
+            printf("%d %02d/%02d/%d%s%s\t",AD->idAdherent,AD->jour,AD->mois,AD->annees,AD->civ,AD->prenomNom);
+            printf("%d/%d/%d\t\n", l->jour,l->mois,l->annees); 
         }           
+        i++;
         printf("\n");
         l = l->suiv;
         AD = AD->s;
         trouve=rechercheID(l,tabJeux,&rang,tailleLogJeux);
     }
+    printf("%d\n", i);
 }
 int rechercheID (Liste l, Jeux *tabJeux[],int *rang,int tailleLogJeux)
 {
@@ -289,6 +292,7 @@ ListeAD listenouvAD(void)
     l=NULL;
     return l;
 }
+
 ListeAD ChargementAdherent (ListeAD l)
 {   
     MaillonAD f;
@@ -300,19 +304,20 @@ ListeAD ChargementAdherent (ListeAD l)
         exit(1);
     }
     l=listenouvAD();
-    fscanf(flex,"%d%s%*c",&f.idAdherent,f.civ);
-    fgets(f.nom,12,flex);
-    fscanf(flex,"%s%d%d%d%*c",f.prenom,&f.jour,&f.mois,&f.annees);
+    fscanf(flex,"%d %d %d %d %s", &f.idAdherent, &f.jour, &f.mois, &f.annees, f.civ);
+    fgets(f.prenomNom,40,flex);
+    f.prenomNom[strlen(f.prenomNom)-1] = '\0';
     while(!feof(flex))
     {
         l=insertionEnTeteAD(l,f);
-        fscanf(flex,"%d%s%*c",&f.idAdherent,f.civ);
-        fgets(f.nom,12,flex);
-        fscanf(flex,"%s%d%d%d%*c",f.prenom,&f.jour,&f.mois,&f.annees);
+        fscanf(flex,"%d %d %d %d %s", &f.idAdherent, &f.jour, &f.mois, &f.annees, f.civ);
+        fgets(f.prenomNom,40,flex);
+        f.prenomNom[strlen(f.prenomNom)-1] = '\0';
     }
     fclose(flex);
     return l;
 }
+
 ListeAD insertionEnTeteAD(ListeAD l,MaillonAD f)
 {   
     MaillonAD *m;
@@ -324,14 +329,14 @@ ListeAD insertionEnTeteAD(ListeAD l,MaillonAD f)
     }
     m->idAdherent = f.idAdherent;
     strcpy(m->civ,f.civ);
-    strcpy(m->nom,f.nom);
-    strcpy(m->prenom,f.prenom);
+    strcpy(m->prenomNom,f.prenomNom);
     m->jour = f.jour;
     m->mois = f.mois;
     m->annees = f.annees;
     m->s = l;
     return m;
 }
+
 
 //-------------------------------Code Réservation---------------------------------------//
 
@@ -458,63 +463,61 @@ Booleen videReserv(ListeReserv r)
 void retourJeux (ListeAD AD,ListeReserv r,Liste l,Jeux *tabJeux[],int tailleLogJeux)
 {   
     int c;
-    int idBack;
-    int erreur;
+    int idBackAD;
     int i;
-    char jeuxBack[20],Nom[20],Prenom[20];
-    printf("Quelle est le jeux que vous voulez rendre ?\n");
+    int idJeux;
+    int idADnew;
+    int a;
+    char jeuxBack[20],nomPrenom[20];
+    printf("Quelle est le jeu que vous voulez rendre ?\n");
     c=getchar();
-    ChargementInfo(jeuxBack);
-    printf("Donnez votre prenom :\n");    
-    scanf("%s",Prenom);
-    printf("Donnez votre nom (en MAJUSCULE):\n");
-    ChargementInfo(Nom);
-    i=retourIDv2(Nom,Prenom,AD,&erreur,i,&idBack); 
-    if(erreur==2)
+    fgets(jeuxBack,20,stdin);
+    jeuxBack[strlen(jeuxBack)-1] = '\0';
+    printf("Donnez votre prenom et votre nom (le nom en MAJUSCULE):\n");   
+    fgets(nomPrenom,20,stdin);
+    nomPrenom[strlen(nomPrenom)-1] = '\0';
+    decalerADroite(nomPrenom);
+    retourIDv2(nomPrenom,AD,&i,&idBackAD);
+    if(i>1)
     {
-        printf("Désolé,nous avons %d personne au même nom et prenom que vous veuillez renseignez votre idAdherent",i);
-        scanf("%d",idBack);
+        printf("Desole,nous avons %d personne au meme nom et prenom que vous,veuillez renseignez votre idAdherent\n",i);
+        scanf("%d",idBackAD);
+        printf("Vous avez ete identifier au %04d\n",idBackAD);
     }
-    if (erreur=1)
+    if (i==0)
     {
-        printf("%s %s ne correspond pas a un adherent de la ludotheque\n",Nom,Prenom);
+        printf("%s ne correspond pas a un adherent de la ludotheque\n",nomPrenom);
         sousMenu(tabJeux,tailleLogJeux,l,AD,r);
     }
-    printf("%d\n",idBack);
+    if(i==1)
+    {
+        printf("Vous avez ete identifier au %04d\n",idBackAD);
+    }
+    idJeux=rechercheIDv4(jeuxBack,tabJeux,tailleLogJeux);
+    idADnew=affectationReserv(r,idJeux,&a);
+    printf("%d\n",idADnew);
+    if (a==1)
+    {
+        supprimer(r,idADnew);
+        ajoutEmprunt(l,idADnew,idJeux);
+    }
+    if(a==0)
+    {
+        //ajoutJeux(idJeux,tabJeux,tailleLogJeux);
+    }
 }
-void ChargementInfo (char type[])
+void retourIDv2(char nomPrenom[],ListeAD AD,int *i,int *idBack)
 {   
-    int c;
-    c=getchar();
-    fgets(type,11,stdin);
-    type[strlen(type)-1] = '\0';
-}
-int retourIDv2(char Nom[],char Prenom[],ListeAD AD,int *erreur,int i,int *idBack)
-{   
-    i=0;
+    *i=0;
     while(!videAD(AD))
     {
-    printf("%s\n",Nom);
-    printf("%s\n",AD->nom);
-    printf("%d\n%d\n",strcmp(Nom,AD->nom),strcmp(AD->prenom,Prenom));
-        if(strcoll(Nom,AD->nom)==0 && strcoll(AD->prenom,Prenom)==0)
+    if(strcmp(nomPrenom,AD->prenomNom)==0)
         {
-            *erreur=0;
-            *idBack=AD->idAdherent;
-            i++;
+        *idBack=AD->idAdherent;
+        *i=*i+1;
         }
-        AD=AD->s;
+    AD=AD->s;
     }
-    if(i>1)
-     {
-        *erreur=2;
-     }
-    printf("%d\n",i);
-    if(i=0)
-    {
-        *erreur=1;
-    }
-    return i;
 }
 Booleen videAD(ListeAD AD)
 {
@@ -522,15 +525,81 @@ Booleen videAD(ListeAD AD)
         return vrai;
     return faux;
 }
-int comparaison (char Nom[],char Prenom[],ListeAD AD)     // Je suis obligé de faire l'équivalent de strcmp() car bizarrement elle ne veut pas marché cette fois.
+void decalerADroite(char tab[])
 {   
-    int i=0;
-    for (int i = 0; i < 20; ++i)
+    int a;
+    a=strlen(tab);                 //-->Le AD->nomPrenom avait un espace en trop au début qui empechait au strcmp de reconnaitre
+    for (int j = a-1; j >=0; j--)  //-->le nomPrenom correspondant j'ai donc ajouer le ' ' au nomPrenom
+    {                            
+        tab[j+1]=tab[j];
+    }
+    tab[0]=' ';
+}
+
+int rechercheIDv4 (char nomJeux[], Jeux *tabJeux[],int tailleLogJeux)
+{
+    for (int i = 0; i < tailleLogJeux; ++i)
     {
-        if(Nom[i]==AD->nom[i] && Prenom[i]==AD->prenom[i])
-        printf("%s\n",AD->nom);
-        return 1;
+        if(strcmp(nomJeux,tabJeux[i]->nom)==0)
+        {   
+            return tabJeux[i]->id;
+        }
     }
     return 0;
 }
-
+int affectationReserv(ListeReserv r,int id,int *a)
+{
+    while(!videReserv(r))
+    {
+        if(r->idJeu==id)
+        {
+            *a=1;
+            return r->idAdherent;
+        }
+    r=r->next;
+    }
+    *a=0;
+    return 0;
+}
+ListeReserv supprimer(ListeReserv l, int x)
+{
+    if (l==NULL)
+    {
+        printf("x n'existe pas dans l.\n");
+        return l;
+    }
+    if (x < l->idAdherent)
+    {
+        printf("x n'existe pas dans l.\n");
+        return l;
+    }
+    if (x == l->idAdherent)
+        return supprimerEnTete(l);
+    l->next = supprimer(l->next, x);
+    return l;
+}
+ListeReserv supprimerEnTete(ListeReserv l)
+{
+    MaillonReserv *m;
+    if (l==NULL)
+    {
+        printf("opération interdite.\n");
+        exit(1);
+    }
+    m = l;
+    l = l->next;
+    free(m);
+    return l;
+}
+Liste ajoutEmprunt(Liste l,int idADnew,int idJeux)
+{
+    while(!vide(l))
+    {
+        if(strcmp(l->idAdherent,idADnew)==0 && strcmp(l->Jeu,idJeux)==0)
+        {
+            l->
+            system(date>date.txt)
+        }
+    l=l->suiv;
+    }
+}

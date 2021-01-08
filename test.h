@@ -24,15 +24,15 @@ typedef struct maillon
 
 typedef struct maillonAD
 {
-	int idAdherent;
-	char civ[20];
-	char nom[20];
-	char prenom[20];
+    int idAdherent;
     int jour;
     int mois;
     int annees;
+    char civ[20];
+    char prenomNom[20];
     struct maillonAD *s;
 }MaillonAD,*ListeAD;
+
 
 
 
@@ -95,7 +95,14 @@ Booleen videReserv(ListeReserv r);
 
 //retour d'un jeux
 void retourJeux (ListeAD AD,ListeReserv R,Liste l,Jeux *tabJeux[],int tailleLogJeux);
-void ChargementInfo (char type[]);
 Booleen videAD(ListeAD AD);
 int comparaison (char Nom[],char Prenom[],ListeAD AD);
-int retourIDv2(char Nom[],char Prenom[],ListeAD AD,int *erreur,int i,int *idBack);
+void retourIDv2(char nomPrenom[],ListeAD AD,int *i,int *idBack);
+void decalerADroite(char jeuxBack[]);
+//suite retour jeux
+//int rechercheIDv3 (ListeReserv r, int idBackAD);
+int rechercheIDv4 (char nomJeux[], Jeux *tabJeux[],int tailleLogJeux);
+int affectationReserv(ListeReserv r,int id,int *a);
+ListeReserv supprimer(ListeReserv l, int x);
+ListeReserv supprimerEnTete(ListeReserv l);
+Liste ajoutEmprunt(Liste l,int idADnew,int idJeux);
