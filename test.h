@@ -77,9 +77,9 @@ ListeAD listenouvAD(void);
 
 
 //LISTE RESERVATION
-int rechercheRangAvecLeNomJeux (char nomJeux[], Jeux *tabJeux[],int *erreur,int tailleLogJeux);
+int rechercheRangAvecLeNomJeux (char nomJeux[], Jeux *tabJeux[],int *trouve,int tailleLogJeux);
 void affichageReservation (ListeReserv r,Jeux *tabJeux[], int tailleLogJeux);
-int rechPuisAffichage (ListeReserv r,int tailleLogJeux,char nomJeux[], int idJeux,int erreur);
+int rechPuisAffichage (ListeReserv r,char nomJeux[], int idJeux,int trouve);
 
 
 // Chargement Réservations
@@ -91,3 +91,5 @@ Booleen videReserv(ListeReserv r);
 
 //test
 void afficherListeADtempo(ListeAD AD);
+void afficherListeReservtempo(ListeReserv r);
+int reservoupas(ListeReserv r,char nomJeux[], int idJeux);
