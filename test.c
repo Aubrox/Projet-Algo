@@ -45,8 +45,8 @@ int choixMenu (Jeux *tabJeux[],int tailleLogJeux,Liste l,ListeAD AD,ListeReserv 
         break;
 	case 2:
         system("cls");
-        afficherListeADtempo(AD);
-        // afficherListe(l,tabJeux,tailleLogJeux,AD);
+        /*afficherListeADtempo(AD);*/
+        afficherListe(l,tabJeux,tailleLogJeux,AD);
         sousMenu(tabJeux,tailleLogJeux,l,AD,r);
         break;
     case 3:
@@ -277,14 +277,14 @@ void afficherListe(Liste l, Jeux *tabJeux[], int tailleLogJeux,ListeAD AD)
         if (trouve==1)
         {    
             printf("%s\t",tabJeux[rang]->nom);
-            printf("%d%s%s%s%d/%d/%d\t",AD->idAdherent,AD->civ,AD->nom,AD->prenom,AD->jour,AD->mois,AD->annees);
-            printf("%d/%d/%d\t\n", l->jour,l->mois,l->annees);    // FAUT FAIRE ADHERENT 
+            printf("%d %02d/%02d/%d %s%s\t",AD->idAdherent,AD->jour,AD->mois,AD->annees,AD->civ,AD->prenomNom);
+            printf("%d/%d/%d\t\n", l->jour,l->mois,l->annees);
         }
         else
         {
             printf("Pas de nom correspondant\t");
-            printf("%d%s%s%s%d/%d/%d\t",AD->idAdherent,AD->civ,AD->nom,AD->prenom,AD->jour,AD->mois,AD->annees);
-            printf("%d/%d/%d\t\n", l->jour,l->mois,l->annees);  
+            printf("%d %02d/%02d/%d %s%s\t",AD->idAdherent,AD->jour,AD->mois,AD->annees,AD->civ,AD->prenomNom);
+            printf("%d/%d/%d\t\n", l->jour,l->mois,l->annees); 
         }           
         i++;
         printf("\n");
@@ -298,7 +298,7 @@ void afficherListe(Liste l, Jeux *tabJeux[], int tailleLogJeux,ListeAD AD)
 
 int rechercheID (Liste l, Jeux *tabJeux[],int *rang,int tailleLogJeux)
 {
-    for (int i = 0; i < tailleLogJeux; ++i)
+    for (int i = 0; i < tailleLogJeux; i++)
     {
         if(l->idJeu==tabJeux[i]->id)
         { 
@@ -309,6 +309,14 @@ int rechercheID (Liste l, Jeux *tabJeux[],int *rang,int tailleLogJeux)
     return 0;
 }
 
+void afficherListeADtempo(ListeAD AD)
+{
+    while (AD!=NULL)
+    {   
+        printf("%d %02d/%02d/%d %s%s\t\n",AD->idAdherent,AD->jour,AD->mois,AD->annees,AD->civ,AD->prenomNom);
+        AD = AD->s;
+    }
+}
 
 Booleen vide(Liste l)
 {
@@ -339,15 +347,15 @@ ListeAD ChargementAdherent (ListeAD l)
         exit(1);
     }
     l=listenouvAD();
-    fscanf(flex,"%d%s%*c",&f.idAdherent,f.civ);
-    fgets(f.nom,12,flex);
-    fscanf(flex,"%s%d%d%d%*c",f.prenom,&f.jour,&f.mois,&f.annees);
+    fscanf(flex,"%d %d %d %d %s", &f.idAdherent, &f.jour, &f.mois, &f.annees, f.civ);
+    fgets(f.prenomNom,40,flex);
+    f.prenomNom[strlen(f.prenomNom)-1] = '\0';
     while(!feof(flex))
     {
         l=insertionEnTeteAD(l,f);
-        fscanf(flex,"%d%s%*c",&f.idAdherent,f.civ);
-        fgets(f.nom,30,flex);
-        fscanf(flex,"%s%d%d%d%*c",f.prenom,&f.jour,&f.mois,&f.annees);
+        fscanf(flex,"%d %d %d %d %s", &f.idAdherent, &f.jour, &f.mois, &f.annees, f.civ);
+        fgets(f.prenomNom,40,flex);
+        f.prenomNom[strlen(f.prenomNom)-1] = '\0';
     }
     fclose(flex);
     return l;
@@ -364,8 +372,7 @@ ListeAD insertionEnTeteAD(ListeAD l,MaillonAD f)
     }
     m->idAdherent = f.idAdherent;
     strcpy(m->civ,f.civ);
-    strcpy(m->nom,f.nom);
-    strcpy(m->prenom,f.prenom);
+    strcpy(m->prenomNom,f.prenomNom);
     m->jour = f.jour;
     m->mois = f.mois;
     m->annees = f.annees;
@@ -374,14 +381,7 @@ ListeAD insertionEnTeteAD(ListeAD l,MaillonAD f)
 }
 
 
-void afficherListeADtempo(ListeAD AD)
-{
-    while (AD!=NULL)
-    {   
-        printf("%d %s %s %s %d/%d/%d\t\n",AD->idAdherent,AD->civ,AD->nom,AD->prenom,AD->jour,AD->mois,AD->annees);
-        AD = AD->s;
-    }
-}
+
 
 //-------------------------------Code Réservation---------------------------------------//
 
@@ -503,4 +503,3 @@ Booleen videReserv(ListeReserv r)
         return vrai;
     return faux;
 }
-

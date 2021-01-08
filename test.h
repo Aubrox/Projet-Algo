@@ -25,12 +25,11 @@ typedef struct maillon
 typedef struct maillonAD
 {
     int idAdherent;
-    char civ[20];
-    char nom[20];
-    char prenom[20];
     int jour;
     int mois;
     int annees;
+    char civ[20];
+    char prenomNom[20];
     struct maillonAD *s;
 }MaillonAD,*ListeAD;
 
