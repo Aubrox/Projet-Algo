@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 typedef struct
 {
@@ -28,7 +29,7 @@ typedef struct maillonAD
     int jour;
     int mois;
     int annees;
-    char civ[20];
+    char civ[4];
     char prenomNom[20];
     struct maillonAD *s;
 }MaillonAD,*ListeAD;
@@ -93,3 +94,4 @@ Booleen videReserv(ListeReserv r);
 void afficherListeADtempo(ListeAD AD);
 void afficherListeReservtempo(ListeReserv r);
 int reservoupas(ListeReserv r,char nomJeux[], int idJeux);
+int globalNouvEnreg(Jeux *tabJeux[],int tailleLogJeux,Liste l,ListeAD AD, ListeReserv r);

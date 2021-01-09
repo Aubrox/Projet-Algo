@@ -55,6 +55,14 @@ int choixMenu (Jeux *tabJeux[],int tailleLogJeux,Liste l,ListeAD AD,ListeReserv 
         affichageReservation(r,tabJeux,tailleLogJeux);
         sousMenu(tabJeux,tailleLogJeux,l,AD,r);
         break;
+    case 4:
+        system("cls");
+        globalNouvEnreg(tabJeux,tailleLogJeux,l,AD,r);
+        sousMenu(tabJeux,tailleLogJeux,l,AD,r);
+        break;
+    case 5:
+        afficherListeADtempo(AD);
+        sousMenu(tabJeux,tailleLogJeux,l,AD,r);
     case 7:
         break;
 	default:
@@ -67,7 +75,7 @@ void sousMenu(Jeux *tabJeux[],int tailleLogJeux,Liste l,ListeAD AD,ListeReserv r
 {
     int choix2;
     printf("\nSelectionner un bouton du menu :");
-    printf("\n\n1. Retour au menu\t\t2. Quitter\n");
+    printf("\n\n1 Retour au menu\t\t2 Quitter\n");
     scanf("%d", &choix2);
     while(choix2<1 || choix2 >2)
     {
@@ -269,13 +277,13 @@ ListeAD ChargementAdherent (ListeAD l)
         exit(1);
     }
     l=listenouvAD();
-    fscanf(flex,"%d %d %d %d %s", &f.idAdherent, &f.jour, &f.mois, &f.annees, f.civ);
+    fscanf(flex,"%d %d %d %d %s%*c", &f.idAdherent, &f.jour, &f.mois, &f.annees, f.civ);
     fgets(f.prenomNom,40,flex);
     f.prenomNom[strlen(f.prenomNom)-1] = '\0';
     while(!feof(flex))
     {
         l=insertionEnTeteAD(l,f);
-        fscanf(flex,"%d %d %d %d %s", &f.idAdherent, &f.jour, &f.mois, &f.annees, f.civ);
+        fscanf(flex,"%d %d %d %d %s%*c", &f.idAdherent, &f.jour, &f.mois, &f.annees, f.civ);
         fgets(f.prenomNom,40,flex);
         f.prenomNom[strlen(f.prenomNom)-1] = '\0';
     }
@@ -362,13 +370,12 @@ ListeReserv insertionEnTeteReserv(ListeReserv r,MaillonReserv res)
 
 void afficherJeux( Jeux *tabJeux[], int tailleLogJeux)
 {    
-    printf("\nidJeux\tNombre d'exemplaire(s)\t\tNombres d'exmplaires\t\tNom du Jeux\n\n");
+    printf("idJeux\ttypeJeux\tNombres d'exmplaires\tnomJeux\n");
     for (int i = 0; i < tailleLogJeux; ++i)
     {
-        printf("%d\t%d\t\t\t\t%s\t\t\t%s\n",tabJeux[i]->id,tabJeux[i]->nbExemplaire,tabJeux[i]->nom,tabJeux[i]->type);
+        printf("%d\t%s\t%d\t\t\t%s\n",tabJeux[i]->id,tabJeux[i]->type,tabJeux[i]->nbExemplaire,tabJeux[i]->nom);
     }
 }
-
 
 
 // ------------------------------- Fonction 2 : affichage de la liste d'emprunts en cours ---------------------------------
@@ -419,7 +426,7 @@ void afficherListeADtempo(ListeAD AD)
 {
     while (AD!=NULL)
     {   
-        printf("%d %02d/%02d/%d %s%s\t\n",AD->idAdherent,AD->jour,AD->mois,AD->annees,AD->civ,AD->prenomNom);
+        printf("%04d %02d/%02d/%d %s %s\t\n",AD->idAdherent,AD->jour,AD->mois,AD->annees,AD->civ,AD->prenomNom);
         AD = AD->s;
     }
 }
@@ -432,7 +439,7 @@ Booleen vide(Liste l)
 }
 
 
-//---------------------------- Fonction 3 : affichage des réservtions d'un jeu ------------------------------------
+//---------------------------- Fonction 3 : affichage des résèrvations d'un jeu ------------------------------------
 
 
 
@@ -526,3 +533,52 @@ Booleen videReserv(ListeReserv r)
         return vrai;
     return faux;
 }
+
+
+//--------------------- Fonction 4 : Saisie et enregistrement d'un nouvel emprunt/reservation -----------------------------
+
+
+int globalNouvEnreg(Jeux *tabJeux[],int tailleLogJeux,Liste l,ListeAD AD, ListeReserv r)
+{
+    int existe;
+    srand(time(NULL));
+    int nouvIDAD;
+    int c;
+    MaillonAD mAD;
+    printf("Êtes-vous déjà adhérent à notre ludothèque ?\n");
+    printf("\n\n1 Oui\t\t2 Non\n");
+    scanf("%d", &existe);
+    while(existe<1 || existe >2)
+    {
+        printf("\n\tErreur lors du choix, veuillez reessayer :");
+        scanf("%d",&existe);
+    }
+    if(existe==2)
+    {
+       
+        printf("Veuillez saisir votre prénom et votre nom (exemple : Prenom NOM)");
+        c=getchar();
+        fgets(mAD.prenomNom,40,stdin);
+        mAD.prenomNom[strlen(mAD.prenomNom)-1] = '\0';
+        printf("Veuillez saisir votre civilité (Mr ou Mme)");
+        scanf("%s",mAD.civ);
+        printf("Veuillez saisir la date actuelle (jj mm aaaa)");
+        scanf("%d %d %d", &mAD.jour, &mAD.mois, &mAD.annees);
+        nouvIDAD=rand() % 9999 + 1;
+        mAD.idAdherent=nouvIDAD;
+        AD=insertionEnTeteAD(AD,mAD);
+        afficherListeADtempo(AD);
+    }
+    /*else
+    {
+
+    }
+*/
+}
+
+
+        /*l=insertionEnTeteAD(l,f);
+        scanf("%d %d %d %d %s", &f.idAdherent, &f.jour, &f.mois, &f.annees, f.civ);
+        fgets(f.prenomNom,40,stdin);
+        f.prenomNom[strlen(f.prenomNom)-1] = '\0';*/
+
