@@ -65,7 +65,7 @@ int choixMenu (Jeux *tabJeux[],int tailleLogJeux,Liste l,ListeAD AD,ListeReserv 
     */
     case 5:
         system("cls");
-        affichageNbReservation (r,tabJeux, tailleLogJeux);
+        affichageNbReservation (tabJeux, tailleLogJeux, AD, l, r);
         break;
 	default:
 		break;
@@ -310,13 +310,13 @@ ListeAD ChargementAdherent (ListeAD l)
         exit(1);
     }
     l=listenouvAD();
-    fscanf(flex,"%d %d %d %d %s", &f.idAdherent, &f.jour, &f.mois, &f.annees, f.civ);
+    fscanf(flex,"%d %d %d %d %s%*c", &f.idAdherent, &f.jour, &f.mois, &f.annees, f.civ);
     fgets(f.prenomNom,40,flex);
     f.prenomNom[strlen(f.prenomNom)-1] = '\0';
     while(!feof(flex))
     {
         l=insertionEnTeteAD(l,f);
-        fscanf(flex,"%d %d %d %d %s", &f.idAdherent, &f.jour, &f.mois, &f.annees, f.civ);
+        fscanf(flex,"%d %d %d %d %s%*c", &f.idAdherent, &f.jour, &f.mois, &f.annees, f.civ);
         fgets(f.prenomNom,40,flex);
         f.prenomNom[strlen(f.prenomNom)-1] = '\0';
     }
@@ -465,7 +465,7 @@ Booleen videReserv(ListeReserv r)
 
 /*-----------------------------------------------------------------------------------------------------*/
 //5. Retour d'un jeu
-
+/*
 void retourJeux (ListeAD AD,ListeReserv r,Liste l,Jeux *tabJeux[],int tailleLogJeux)
 {   
     int c;
@@ -612,7 +612,7 @@ Liste ajoutEmprunt(Liste l,int idADnew,int idJeux)
     }
 }
 
-
+*/
 
 //----------------------------Annulation Reservation ------------------------------------------//
 // Demander le prenom Nom de la personne, rechercher son ID Adherent via son nom puis rechercher la/les reservation(s) en cours en affichant les jeux reserver puis lui demander si il souhaite réellement l'annuler//
@@ -627,7 +627,9 @@ void affichageNbReservation (Jeux *tabJeux[], int tailleLogJeux,ListeAD AD,Liste
     fgets(nomPrenom,20,stdin);
     nomPrenom[strlen(nomPrenom)-1] = '\0';
     rechercheIdAdherent(nomPrenom, AD, &erreur, &saisieID);
-    if(erreur=1)
+    printf("Votre ID est %d \n", saisieID);
+    printf("%s", nomPrenom);
+    /*if(erreur=1)
     {
         printf("%s ne correspond pas a un adherent de la ludotheque\n",nomPrenom);
         sousMenu(tabJeux,tailleLogJeux,l,AD,r); 
@@ -638,8 +640,8 @@ void affichageNbReservation (Jeux *tabJeux[], int tailleLogJeux,ListeAD AD,Liste
         scanf("%d", saisieID);
     }
         printf("Voici vos reservations en cours :\n");
-        showReserv(tabJeux, AD);
-        nbReservation=nbReserv(AD, idAdherent);
+        //showReserv(tabJeux, AD);
+        //nbReservation=nbReserv(AD, idAdherent);
         if(nbReservation=1)
         {
             printf("Voulez vous vraiment supprimer cette réservation ?(o/n)");
@@ -657,9 +659,9 @@ void affichageNbReservation (Jeux *tabJeux[], int tailleLogJeux,ListeAD AD,Liste
             supprimerReservation();
         }
         
-    }
+    }*/
 }
-
+/*
 int nbReserv(ListeAD AD, int idAdherent)
 {
     int nbReservation=0;
@@ -670,21 +672,32 @@ int nbReserv(ListeAD AD, int idAdherent)
         nbReservation++;
     return showReserv(AD->s, idAdherent);
 }
+*/
+
+Booleen videAD(ListeAD AD)
+{
+    if(AD==NULL)
+        return vrai;
+    return faux;
+}
 
 void rechercheIdAdherent(char nomPrenom[],ListeAD AD,int *erreur,int *saisieID)
 {   
     *erreur=0;
-    while(!videAD(AD))
+    while(AD!=NULL)
     {
-    if(strcmp(nomPrenom,AD->prenomNom)==0)
-        {
-        *saisieID=AD->idAdherent;
-        *erreur=*erreur+1;
-        }
-    AD=AD->s;
+        if(strcmp(nomPrenom,AD->prenomNom)==0)
+            {
+            *saisieID=AD->idAdherent;
+            *erreur=*erreur+1;
+            }
+        AD=AD->s;
     }
 }
 
+
+
+/*
 void showReserv(Jeux *tabJeux [], ListeAD AD,)
 {
 
@@ -698,7 +711,9 @@ void rechJeuCorrespondant(Jeux *tabJeux[], ListeAD AD, *saisieID)
 
 }
 
+
+
 // NOTE POUR LE PROCHAIN MEC QUI VIENT : Il manque a faire : rechJeuCorrespondant qui consiste a : via l'ID adherent, afficher le nom du jeu correspondant ( faire le pont entre LISTE AD et tabJeux)
 // Supprimer la réservation correspondante à l'ID 
 // Mettre toute les fct dans le .h 
-// Je (Bastien) continue ce travail mais je galère un peu je me mets des notes a moi même allez merci 
+// Je (Bastien) continue ce travail mais je galère un peu je me mets des notes a moi même allez merci */

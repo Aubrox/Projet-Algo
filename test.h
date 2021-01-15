@@ -110,3 +110,4 @@ Liste ajoutEmprunt(Liste l,int idADnew,int idJeux); */
 
 //Annulation Reservation 
 void affichageNbReservation (Jeux *tabJeux[], int tailleLogJeux,ListeAD AD, Liste l,ListeReserv r);
+void rechercheIdAdherent(char nomPrenom[],ListeAD AD,int *erreur,int *saisieID);
