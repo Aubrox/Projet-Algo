@@ -620,7 +620,7 @@ Liste ajoutEmprunt(Liste l,int idADnew,int idJeux)
 // Demander le prenom Nom de la personne, rechercher son ID Adherent via son nom puis rechercher la/les reservation(s) en cours en affichant les jeux reserver puis lui demander si il souhaite réellement l'annuler//
 void affichageNbReservation (Jeux *tabJeux[], int tailleLogJeux,ListeAD AD,Liste l,ListeReserv r)
 {
-    int i, idAdherent,erreur, nbReservation;
+    int i, idAdherent,trouve, nbReservation;
     char nomPrenom[20], nomJeu[20];
     char c, choix;
     int saisieID;
@@ -628,24 +628,23 @@ void affichageNbReservation (Jeux *tabJeux[], int tailleLogJeux,ListeAD AD,Liste
     c=getchar();
     fgets(nomPrenom,20,stdin);
     nomPrenom[strlen(nomPrenom)-1] = '\0';
-    afficherListeADtempo(AD);
-    saisieID=rechercheIdAdherent(nomPrenom, AD, &erreur, saisieID);
-    printf("Votre ID est %d \n", saisieID);
-
-    //printf("%s", nomPrenom);
-    /*if(erreur=1)
+    saisieID=rechercheIdAdherent(nomPrenom, AD, &trouve, saisieID);
+    if(trouve==0)
     {
-        printf("%s ne correspond pas a un adherent de la ludotheque\n",nomPrenom);
-        sousMenu(tabJeux,tailleLogJeux,l,AD,r); 
+            printf("%s ne correspond pas a un adherent de la ludotheque\n",nomPrenom);
+            sousMenu(tabJeux,tailleLogJeux,l,AD,r); 
     }
-    if(erreur=2)
+    else if(trouve>1)
     {
-        printf("Il existe deux personne possédant le même prenom et nom que vous, veuillez renseignez votre ID adhérent s'il vous plait :\n");
-        scanf("%d", saisieID);
+        printf("Il existe %d personne possedant le meme prenom et nom que vous, veuillez renseignez votre ID adherent s'il vous plait :\n",trouve);
+        scanf("%d", &saisieID); 
     }
-        printf("Voici vos reservations en cours :\n");
-        //showReserv(tabJeux, AD);
+    if(trouve>=1)
+    {
+        printf("Reservation de %s :\n", nomPrenom);
+        rechJeuCorrespondant(tabJeux, r, saisieID, nomPrenom);
         //nbReservation=nbReserv(AD, idAdherent);
+        /*
         if(nbReservation=1)
         {
             printf("Voulez vous vraiment supprimer cette réservation ?(o/n)");
@@ -654,7 +653,7 @@ void affichageNbReservation (Jeux *tabJeux[], int tailleLogJeux,ListeAD AD,Liste
                 supprimerReservation();
             else 
                 choixMenu(tabJeux, tailleLogJeux, l,AD,r);
-            
+                
         }
         if(nbReservation>1)
         {
@@ -662,8 +661,8 @@ void affichageNbReservation (Jeux *tabJeux[], int tailleLogJeux,ListeAD AD,Liste
             scanf("%s", nomJeu);
             supprimerReservation();
         }
-        
-    }*/
+            */
+    }
 }
 /*
 int nbReserv(ListeAD AD, int idAdherent)
@@ -676,8 +675,8 @@ int nbReserv(ListeAD AD, int idAdherent)
         nbReservation++;
     return showReserv(AD->s, idAdherent);
 }
-*/
 
+*/
 void afficherListeADtempo(ListeAD AD)
 {
     while (AD!=NULL)
@@ -696,39 +695,46 @@ Booleen videAD(ListeAD AD)
     return faux;
 }
 
-int rechercheIdAdherent(char nomPrenom[],ListeAD AD,int *erreur,int saisieID)
+int rechercheIdAdherent(char nomPrenom[],ListeAD AD,int *trouve,int saisieID)
 {   
-    *erreur=0;
+    *trouve=0;
     while(AD!=NULL)
     {
         if(strcmp(nomPrenom,AD->prenomNom)==0)
             {
-            printf("%d",AD->idAdherent);
+            //printf("%d",AD->idAdherent);
             saisieID=AD->idAdherent;
-            *erreur=*erreur +1;
-            return saisieID;
+            *trouve=*trouve+1;
             }
         AD=AD->s;
     }
+    return saisieID;
 }
 
-/*
-void showReserv(Jeux *tabJeux [], ListeAD AD,)
+
+void afficherReservation(Jeux *tabJeux [], int j)
 {
-
+    //printf("Jeux : %s \t Date de Reservation prévue pour le jeu : %04d %02d/%02d/%d \n \n", tabJeux[i]->nom, tabJeux[i]->);
+    printf("Nom du jeu : %s \n \n", tabJeux[j]->nom);
+    
 }
 
-void rechJeuCorrespondant(Jeux *tabJeux[], ListeAD AD, *saisieID)
+void rechJeuCorrespondant(Jeux *tabJeux[], ListeReserv r, int saisieID, char nomPrenom[20])
 {
-    if(strcmp(&saisieID))
+    int j=0;
+    int idJeubon;
+    while(r !=NULL)
+    {
 
-
-
+        if(saisieID==r->idAdherent)
+        {
+            idJeubon=r->idJeu;
+            for(j=0; j<8; j++)
+            {
+                if(tabJeux[j]->id == idJeubon)
+                     afficherReservation(tabJeux, j);
+            } 
+        }
+        r=r->next;
+    }
 }
-
-
-
-// NOTE POUR LE PROCHAIN MEC QUI VIENT : Il manque a faire : rechJeuCorrespondant qui consiste a : via l'ID adherent, afficher le nom du jeu correspondant ( faire le pont entre LISTE AD et tabJeux)
-// Supprimer la réservation correspondante à l'ID 
-// Mettre toute les fct dans le .h 
-// Je (Bastien) continue ce travail mais je galère un peu je me mets des notes a moi même allez merci */
