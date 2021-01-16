@@ -58,14 +58,12 @@ int choixMenu (Jeux *tabJeux[],int tailleLogJeux,Liste l,ListeAD AD,ListeReserv 
         sousMenu(tabJeux,tailleLogJeux,l,AD,r);
         break;
     case 4:
-    /*
         system("cls");
         retourJeux(AD,r,l,tabJeux,tailleLogJeux);
         sousMenu(tabJeux,tailleLogJeux,l,AD,r);
-    */
     case 5:
-        system("cls");
-        affichageNbReservation (r,tabJeux, tailleLogJeux);
+        /*system("cls");
+        affichageNbReservation (r,tabJeux, tailleLogJeux);*/
         break;
 	default:
 		break;
@@ -230,7 +228,7 @@ Liste testEmprunt (Liste l)
 
 Liste insertionEnTete(Liste l,Maillon f)
 {   
-    Maillon *m;
+    Liste m;
     m = (Maillon*)malloc(sizeof(Maillon));
     if (m==NULL)
     {
@@ -502,10 +500,11 @@ void retourJeux (ListeAD AD,ListeReserv r,Liste l,Jeux *tabJeux[],int tailleLogJ
     idJeux=rechercheIDv4(jeuxBack,tabJeux,tailleLogJeux);
     idADnew=affectationReserv(r,idJeux,&a);
     printf("%d\n",idADnew);
+    printf("%d\n",idJeux);
     if (a==1)
     {
         supprimer(r,idADnew);
-        ajoutEmprunt(l,idADnew,idJeux);
+        //ajoutEmprunt(l,idADnew,idJeux);
     }
     if(a==0)
     {
@@ -599,23 +598,22 @@ ListeReserv supprimerEnTete(ListeReserv l)
 }
 
 
-Liste ajoutEmprunt(Liste l,int idADnew,int idJeux)
+/*Liste ajoutEmprunt(Liste l,int idADnew,int idJeux)
 {
     while(!vide(l))
     {
         if(strcmp(l->idAdherent,idADnew)==0 && strcmp(l->Jeu,idJeux)==0)
         {
-            l->
-            system(date>date.txt)
+           
         }
     l=l->suiv;
     }
 }
 
 
-
 //----------------------------Annulation Reservation ------------------------------------------//
 // Demander le prenom Nom de la personne, rechercher son ID Adherent via son nom puis rechercher la/les reservation(s) en cours en affichant les jeux reserver puis lui demander si il souhaite réellement l'annuler//
+/*
 void affichageNbReservation (Jeux *tabJeux[], int tailleLogJeux,ListeAD AD,Liste l,ListeReserv r)
 {
     int i, idAdherent, erreur, nbReservation;
@@ -702,3 +700,4 @@ void rechJeuCorrespondant(Jeux *tabJeux[], ListeAD AD, *saisieID)
 // Supprimer la réservation correspondante à l'ID 
 // Mettre toute les fct dans le .h 
 // Je (Bastien) continue ce travail mais je galère un peu je me mets des notes a moi même allez merci 
+*/
