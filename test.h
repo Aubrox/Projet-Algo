@@ -90,7 +90,7 @@ ListeReserv testReservation (ListeReserv r);
 ListeReserv insertionEnTeteReserv (ListeReserv r, MaillonReserv res);
 ListeReserv listenouvReserv ( void );
 Booleen videReserv(ListeReserv r);
-
+void afficherListeADtempo(ListeAD AD);
 
 /*
 //retour d'un jeux
@@ -110,4 +110,4 @@ Liste ajoutEmprunt(Liste l,int idADnew,int idJeux); */
 
 //Annulation Reservation 
 void affichageNbReservation (Jeux *tabJeux[], int tailleLogJeux,ListeAD AD, Liste l,ListeReserv r);
-void rechercheIdAdherent(char nomPrenom[],ListeAD AD,int *erreur,int *saisieID);
+int rechercheIdAdherent(char nomPrenom[],ListeAD AD,int *erreur,int saisieID);

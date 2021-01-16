@@ -22,7 +22,6 @@ int test1 (Jeux *tabJeux[])
     int tailleLogJeux;
     tailleLogJeux=remplirTab(tabJeux,50);
     triTabJeux(tabJeux,tailleLogJeux);
-    afficherJeux(tabJeux,tailleLogJeux);
     return tailleLogJeux;
 }
 
@@ -66,6 +65,7 @@ int choixMenu (Jeux *tabJeux[],int tailleLogJeux,Liste l,ListeAD AD,ListeReserv 
     case 5:
         system("cls");
         affichageNbReservation (tabJeux, tailleLogJeux, AD, l, r);
+        sousMenu(tabJeux,tailleLogJeux,l,AD,r);
         break;
 	default:
 		break;
@@ -98,7 +98,7 @@ void sousMenu(Jeux *tabJeux[],int tailleLogJeux,Liste l,ListeAD AD,ListeReserv r
 
 void affichageMenu(void)
 {
-	system("cls");
+	// system("cls");
 	printf("\n \n \n ");
 	printf("\t 1. Affichage de la liste des jeux \n");
 	printf("\t 2. Affichage de la liste des emprunts en cours \n");
@@ -224,6 +224,7 @@ Liste testEmprunt (Liste l)
         l=insertionEnTete(l,f);
         fscanf(flux,"%d%d%d%d%d%d%*c",&f.idEmprunt,&f.idAdherent,&f.idJeu,&f.jour,&f.mois,&f.annees);
     }
+    l=insertionEnTete(l,f);
     fclose(flux);
     return l;
 }
@@ -320,6 +321,7 @@ ListeAD ChargementAdherent (ListeAD l)
         fgets(f.prenomNom,40,flex);
         f.prenomNom[strlen(f.prenomNom)-1] = '\0';
     }
+    l=insertionEnTeteAD(l,f);
     fclose(flex);
     return l;
 }
@@ -618,7 +620,7 @@ Liste ajoutEmprunt(Liste l,int idADnew,int idJeux)
 // Demander le prenom Nom de la personne, rechercher son ID Adherent via son nom puis rechercher la/les reservation(s) en cours en affichant les jeux reserver puis lui demander si il souhaite réellement l'annuler//
 void affichageNbReservation (Jeux *tabJeux[], int tailleLogJeux,ListeAD AD,Liste l,ListeReserv r)
 {
-    int i, idAdherent, erreur, nbReservation;
+    int i, idAdherent,erreur, nbReservation;
     char nomPrenom[20], nomJeu[20];
     char c, choix;
     int saisieID;
@@ -626,9 +628,11 @@ void affichageNbReservation (Jeux *tabJeux[], int tailleLogJeux,ListeAD AD,Liste
     c=getchar();
     fgets(nomPrenom,20,stdin);
     nomPrenom[strlen(nomPrenom)-1] = '\0';
-    rechercheIdAdherent(nomPrenom, AD, &erreur, &saisieID);
+    afficherListeADtempo(AD);
+    saisieID=rechercheIdAdherent(nomPrenom, AD, &erreur, saisieID);
     printf("Votre ID est %d \n", saisieID);
-    printf("%s", nomPrenom);
+
+    //printf("%s", nomPrenom);
     /*if(erreur=1)
     {
         printf("%s ne correspond pas a un adherent de la ludotheque\n",nomPrenom);
@@ -674,6 +678,17 @@ int nbReserv(ListeAD AD, int idAdherent)
 }
 */
 
+void afficherListeADtempo(ListeAD AD)
+{
+    while (AD!=NULL)
+    {   
+        printf("%04d %02d/%02d/%d %s %s\t\n",AD->idAdherent,AD->jour,AD->mois,AD->annees,AD->civ,AD->prenomNom);
+        AD = AD->s;
+    }
+    printf("bonjour");
+}
+
+
 Booleen videAD(ListeAD AD)
 {
     if(AD==NULL)
@@ -681,21 +696,21 @@ Booleen videAD(ListeAD AD)
     return faux;
 }
 
-void rechercheIdAdherent(char nomPrenom[],ListeAD AD,int *erreur,int *saisieID)
+int rechercheIdAdherent(char nomPrenom[],ListeAD AD,int *erreur,int saisieID)
 {   
     *erreur=0;
     while(AD!=NULL)
     {
         if(strcmp(nomPrenom,AD->prenomNom)==0)
             {
-            *saisieID=AD->idAdherent;
-            *erreur=*erreur+1;
+            printf("%d",AD->idAdherent);
+            saisieID=AD->idAdherent;
+            *erreur=*erreur +1;
+            return saisieID;
             }
         AD=AD->s;
     }
 }
-
-
 
 /*
 void showReserv(Jeux *tabJeux [], ListeAD AD,)
