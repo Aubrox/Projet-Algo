@@ -112,4 +112,9 @@ Liste ajoutEmprunt(Liste l,int idADnew,int idJeux); */
 void affichageNbReservation (Jeux *tabJeux[], int tailleLogJeux,ListeAD AD, Liste l,ListeReserv r);
 int rechercheIdAdherent(char nomPrenom[],ListeAD AD,int *trouve,int saisieID);
 void afficherReservation(Jeux *tabJeux [], int j);
-void rechJeuCorrespondant(Jeux *tabJeux[], ListeReserv r, int saisieID, char nomPrenom[20]);
+void rechJeuCorrespondant(Jeux *tabJeux[], ListeReserv r, int saisieID, char nomPrenom[20], int tailleLogJeux);
+int nbReserv(ListeReserv r, int saisieID);
+ListeReserv supprimerEnTete(ListeReserv r);
+ListeReserv supprimerReservation(ListeReserv r, int saisieID);
+ListeReserv supprimerReservationv2(ListeReserv r, int jeuSupp);
+int findJeu (ListeReserv r, char nomJeu[20], Jeux *tabJeux[], int tailleLogJeux);

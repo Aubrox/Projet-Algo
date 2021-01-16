@@ -5,4 +5,4 @@
 147 Carte 46 Tarot
 012 Tuile 12 Dominos
 209 Tuile 4 Qwirkle
-369 Carte 60 Uno
+369 Carte 60 Uno 
