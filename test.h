@@ -86,6 +86,7 @@ int rechPuisAffichage (ListeReserv r,char nomJeux[], int idJeux,int trouve);
 // Chargement Réservations
 ListeReserv testReservation (ListeReserv r);
 ListeReserv insertionEnTeteReserv (ListeReserv r, MaillonReserv res);
+ListeReserv insertionCroissanteReserv(ListeReserv r, MaillonReserv mRES);
 ListeReserv listenouvReserv ( void );
 Booleen videReserv(ListeReserv r);
 
@@ -95,3 +96,14 @@ void afficherListeADtempo(ListeAD AD);
 void afficherListeReservtempo(ListeReserv r);
 int reservoupas(ListeReserv r,char nomJeux[], int idJeux);
 int globalNouvEnreg(Jeux *tabJeux[],int tailleLogJeux,Liste l,ListeAD AD, ListeReserv r);
+ListeAD insertionCroissanteAD(ListeAD l,MaillonAD f);
+int nouvelIDAD(ListeAD AD);
+Liste insertionCroissante(Liste l, Maillon f);
+void afficherListeTemp(Liste l);
+int rechercheIDAD(char prenomNomExistant[], ListeAD AD);
+int creationAdherent(ListeAD AD);
+
+void nouvelEmprunt(Liste e, int IDjeu, int IDAD);
+int nouvelIDEmp(Liste e);
+void nouvelleReservation(ListeReserv r, int IDjeu,int IDAD);
+int nouvelIDRes(ListeReserv r);
