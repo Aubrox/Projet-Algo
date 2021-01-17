@@ -62,9 +62,9 @@ int choixMenu (Jeux *tabJeux[],int tailleLogJeux,Liste l,ListeAD AD,ListeReserv 
         retourJeux(AD,r,l,tabJeux,tailleLogJeux);
         sousMenu(tabJeux,tailleLogJeux,l,AD,r);
     */
-    case 5:
+    case 6:
         system("cls");
-        affichageNbReservation (tabJeux, tailleLogJeux, AD, l, r);
+        affichageNbReservation(tabJeux, tailleLogJeux, AD, l, r);
         sousMenu(tabJeux,tailleLogJeux,l,AD,r);
         break;
 	default:
@@ -624,7 +624,7 @@ void affichageNbReservation (Jeux *tabJeux[], int tailleLogJeux,ListeAD AD,Liste
     char nomPrenom[20], nomJeu[20];
     char c, choix;
     int saisieID;
-    printf("Saississez votre prenom et votre nom en majuscule : \n");
+    printf("Saississez votre prenom et votre nom en majuscule : (ex : Xavier POLIN) \n");
     c=getchar();
     fgets(nomPrenom,20,stdin);
     nomPrenom[strlen(nomPrenom)-1] = '\0';
@@ -642,13 +642,16 @@ void affichageNbReservation (Jeux *tabJeux[], int tailleLogJeux,ListeAD AD,Liste
     if(trouve>=1)
     {
         printf("Reservation de %s :\n", nomPrenom);
-        rechJeuCorrespondant(tabJeux, r, saisieID, nomPrenom, tailleLogJeux);
-        printf("TEST TEST TEST");
+        rechJeuCorrespondant(tabJeux, r, saisieID, tailleLogJeux);
         nbReservation=nbReserv(r, saisieID);
-        printf("Nombre de reservation : %d\n", nbReservation);
+        if(nbReservation==0)
+        {
+            printf("Vous n'avez aucune reservation en cours \n");
+            choixMenu(tabJeux, tailleLogJeux, l,AD,r);
+        }
         if(nbReservation==1)
         {
-            printf("Voulez vous vraiment supprimer cette réservation ?(o/n)");
+            printf("Voulez vous vraiment supprimer cette reservation ?(o/n)");
             scanf("%c%*c", &choix);
             if(choix='o')
                 supprimerReservation(r, saisieID);
@@ -659,8 +662,11 @@ void affichageNbReservation (Jeux *tabJeux[], int tailleLogJeux,ListeAD AD,Liste
         if(nbReservation>1)
         {
             printf("Saississez le jeu dont vous voulez supprimer la reservation \n");
-            scanf("%s", nomJeu);
-            jeuSupp=findJeu(r, nomJeu, tabJeux, tailleLogJeux);
+            c=getchar();
+            fgets(nomJeu,20,stdin);
+            nomJeu[strlen(nomJeu)-1] = '\0';
+            printf("Nom du jeu : %s \n", nomJeu);
+            jeuSupp=findJeu(r, nomJeu, tabJeux, tailleLogJeux, l, AD, saisieID);
             supprimerReservationv2(r, jeuSupp);
         }
     }
@@ -686,7 +692,6 @@ void afficherListeADtempo(ListeAD AD)
         printf("%04d %02d/%02d/%d %s %s\t\n",AD->idAdherent,AD->jour,AD->mois,AD->annees,AD->civ,AD->prenomNom);
         AD = AD->s;
     }
-    printf("bonjour");
 }
 
 
@@ -721,9 +726,30 @@ void afficherReservation(Jeux *tabJeux [], int j)
     
 }
 
-void rechJeuCorrespondant(Jeux *tabJeux[], ListeReserv r, int saisieID, char nomPrenom[20], int tailleLogJeux)
+/*
+void plusbeau(Jeux* tabJeux[], ListeReserv r, int saisieID, int tailleLogJeux)
 {
-    int j=0;
+    int i=0;
+    Jeux *propre[tailleLogJeux];
+    while(r!=NULL)
+    {
+        if(saisieID==r->idAdherent)
+        {
+            propre[tailleLogJeux]->id=r->idJeu;
+            for(j=0; j<)
+
+        }
+        tailleLogJeux++;
+    }
+
+}
+*/
+
+void rechJeuCorrespondant(Jeux *tabJeux[], ListeReserv r, int saisieID, int tailleLogJeux)
+{
+    
+    
+    int j;
     int idJeubon;
     while(r !=NULL)
     {
@@ -734,10 +760,7 @@ void rechJeuCorrespondant(Jeux *tabJeux[], ListeReserv r, int saisieID, char nom
             for(j=0; j<tailleLogJeux; j++)
             {
                 if(tabJeux[j]->id == idJeubon)
-                {
-                     afficherReservation(tabJeux, j);
-                     printf("Test");
-                }
+                     afficherReservation(tabJeux, j);    
             } 
         }
         r=r->next;
@@ -749,7 +772,7 @@ ListeReserv supprimerEnTete(ListeReserv r)
   MaillonReserv *o;
   if (r==NULL)
   {
-      printf("op interdite\n");
+      printf("opération interdite\n");
       exit (1);
   }
   o=r;
@@ -763,15 +786,19 @@ ListeReserv supprimerReservation(ListeReserv r, int saisieID)
     if(r==NULL)
         return r;
     if(saisieID==r->idAdherent)
+    {
+        printf("Reservation supprimee\n");
         return supprimerEnTete(r);
+    }
     r->next=supprimerReservation(r->next,saisieID);
     return r;
 }
 
-int findJeu (ListeReserv r, char nomJeu[20], Jeux *tabJeux[], int tailleLogJeux)
+int findJeu (ListeReserv r, char nomJeu[20], Jeux *tabJeux[], int tailleLogJeux, Liste l, ListeAD AD, int saisieID)
 {
     int i, jeuSupp;
-    for(i=0; i<tailleLogJeux;i++)
+    char c;
+    for(i=0; i<tailleLogJeux;i++)//Parcours du tableau tabJeux jusqu'a trouver le nom du Jeu correspondant pour ensuite retourner l'id du jeu correspondant.
     {    
         if(strcmp(tabJeux[i]->nom, nomJeu)==0)
         {
@@ -779,15 +806,27 @@ int findJeu (ListeReserv r, char nomJeu[20], Jeux *tabJeux[], int tailleLogJeux)
             return jeuSupp;
         }
     }
+    //Verification que le jeu entre dans le terminal correspond bien a un jeu reservé par la personne, si non, on redemande a l'utilisateur d'entre le nom du Jeu 
+    //et on rappelle la fonction par recursivité
+    printf("Le jeu %s n'est pas present dans notre Ludotheque, voici la liste de vos reservations : \n \n", nomJeu);
+    rechJeuCorrespondant(tabJeux, r, saisieID, tailleLogJeux);
+    printf("Veuillez a nouveau entrez le jeu dont vous souhaitez supprimer la reservation : \n");
+    //c=getchar();
+    fgets(nomJeu,20,stdin);
+    nomJeu[strlen(nomJeu)-1] = '\0';
+    return findJeu(r,nomJeu,tabJeux, tailleLogJeux, l, AD, saisieID);
     exit(1);
 }
 
 ListeReserv supprimerReservationv2(ListeReserv r, int jeuSupp)
 {
-    if(r==NULL)
+    if(r==NULL)//Test d'arret de la fonction 
         return r;
     if(jeuSupp==r->idJeu)
-        return supprimerEnTete(r);
-    r->next=supprimerReservationv2(r->next, jeuSupp);
+    {               //Condition pour supprimer la reservation : Id présent dans jeuSupp = id present dans la reservation
+        printf("Reservation supprimee \n");
+        return supprimerEnTete(r);  //Appel de la fonction supprimerEnTete qui supprimera le jeu correspondant
+    }
+    r->next=supprimerReservationv2(r->next, jeuSupp); //Appel de la fonction par recursivité 
     return r;
 }
