@@ -65,10 +65,14 @@ int choixMenu (Jeux *tabJeux[],int tailleLogJeux,Liste l,ListeAD AD,ListeReserv 
         break;
     case 6:
         system("cls");
-
+        affichageNbReservation (tabJeux,tailleLogJeux,AD,l,r);
         sousMenu(tabJeux,tailleLogJeux,l,AD,r);
         break;
     case 7:
+        sauvegardeEmprunts(l);
+        sauvegarderJeux(tabJeux, tailleLogJeux);
+        sauvegardeReserv(r);
+        sauvegardeAD(AD);
         break;
     case 8:
         system("cls");
@@ -120,7 +124,7 @@ void affichageMenu(void)
     printf("\t 4. Saisie et enregistrement d'un nouvel emprunt/reservation \n");
     printf("\t 5. Retour d'un jeu \n");
     printf("\t 6. Annulation d'une reservation \n");
-    printf("\t 7. Quitter l'application \n");
+    printf("\t 7. Quitter l'application et sauvegarder \n");
     printf("\t (8. Afichage des listes) \n");
 }
 
@@ -130,6 +134,7 @@ void affichageMenu(void)
 void afficherListeTemp(Liste l)
 {
     printf("Idemp IDad IDjeu dateEmp\n");
+    l=l->suiv;
     while (l!=NULL)
     {   
         printf("%04d %04d %03d\t",l->idEmprunt,l->idAdherent,l->idJeu);
@@ -151,6 +156,7 @@ void afficherListeADtempo(ListeAD AD)
 void afficherListeReservtempo(ListeReserv r)
 {
     printf("IDres IDAD IDjeu date\n");
+    r = r->next;
     while (r!=NULL)
     {   
         printf("%02d\t%04d\t%d\t%02d/%02d/%d\n",r->idResa,r->idAdherent,r->idJeu,r->jour,r->mois,r->annees);
@@ -398,7 +404,7 @@ ListeReserv testReservation (ListeReserv r)
     flux=fopen("Reservation.txt","r");
     if(flux == NULL)
     {
-        printf("Problème d'ouverture du fichier réservation");
+        printf("Problème d'ouverture du fichier reservation");
         exit(1);
     }
     r=listenouvReserv();
@@ -477,43 +483,32 @@ void afficherJeux( Jeux *tabJeux[], int tailleLogJeux)
 
 void afficherListe(Liste l, Jeux *tabJeux[], int tailleLogJeux,ListeAD AD)
 {
-    int trouve;
-    int rang;
     printf("Nom du jeu\t\tId de l'emprunteur\tDate de l'emprunt\n\n");
+    l=l->suiv;
     while (!vide(l))
     {   
-        trouve=rechercheID(l,tabJeux,&rang,tailleLogJeux);
-        if (trouve==1)
-        {    
-            printf("%s\t\t",tabJeux[rang]->nom);
-            printf("%04d\t%s %s\t",AD->idAdherent,AD->civ,AD->prenomNom);
-            printf("%02d/%02d/%d\t\n", l->jour,l->mois,l->annees);
-        }
-        else
-        {
-            printf("Pas de nom correspondant\t");
-            printf("%d %02d/%02d/%d %s %s\t",AD->idAdherent,AD->jour,AD->mois,AD->annees,AD->civ,AD->prenomNom);
-            printf("%d/%d/%d\t\n", l->jour,l->mois,l->annees); 
-        }
+        for (int i = 0; i < tailleLogJeux; i++)
+            if (tabJeux[i]->id==l->idJeu)
+                printf("%s\t",tabJeux[i]->nom );
+
+        affichageIdentiteAD(AD,l->idAdherent);
+        printf("%02d/%02d/%d\t\n", l->jour,l->mois,l->annees);
         l = l->suiv;
-        AD = AD->s;
     }
 }
 
-
-int rechercheID (Liste l, Jeux *tabJeux[],int *rang,int tailleLogJeux)
+void affichageIdentiteAD(ListeAD AD, int idAD)
 {
-    for (int i = 0; i < tailleLogJeux; i++)
+    AD=AD->s;
+    while(AD!=NULL)
     {
-        if(l->idJeu==tabJeux[i]->id)
-        { 
-            *rang=i;
-            return 1;
+        if (idAD==AD->idAdherent)
+        {
+            printf("%d %s %s\t",AD->idAdherent,AD->civ,AD->prenomNom);
         }
+        AD=AD->s;
     }
-    return 0;
 }
-
 
 Booleen vide(Liste l)
 {
@@ -575,7 +570,7 @@ int rechPuisAffichage (ListeReserv r,char nomJeux[], int idJeux,int erreur)
     printf("\n");
     if (a!=0)
     {
-        printf("idReservation\tidAdhérent\tidJeux\tJJ/MM/AAAA \n\n");
+        printf("idReservation\tidAdherent\tidJeux\tJJ/MM/AAAA \n\n");
         while (!videReserv(r))
         {   
             if(idJeux==r->idJeu)
@@ -585,20 +580,22 @@ int rechPuisAffichage (ListeReserv r,char nomJeux[], int idJeux,int erreur)
             }
             r = r->next;
         }
-        printf("Il y a un total de %d réservation(s) pour le jeu ""%s""\n",i,nomJeux);
+        printf("Il y a un total de %d reservation(s) pour le jeu ""%s""\n",i,nomJeux);
     }
     else
-        printf("%s n'est réservé par personne !\n\n",nomJeux);        
+        printf("%s n'est reserve par personne !\n\n",nomJeux);        
 }
 
 int reservoupas(ListeReserv r,char nomJeux[], int idJeux)
 {
     int a=0;
-    while(idJeux!=r->idJeu)
+    while(r!=NULL)
     {
-        a++;
+        if(idJeux==r->idJeu)
+            a=1;
         r = r->next;
     }
+    return a;
 }
 
 Booleen videReserv(ListeReserv r)
@@ -644,7 +641,7 @@ int globalNouvEnreg(Jeux *tabJeux[],int tailleLogJeux,Liste l,ListeAD AD, ListeR
         printf("%d\n", IDAD);
         if (IDAD==0)
         {
-            printf("Aucun adhérent correspondant a ce nom\n");
+            printf("Aucun adherent correspondant a ce nom\n");
             return 1;
         }
     }
@@ -835,6 +832,7 @@ void retourJeux (ListeAD AD,ListeReserv r,Liste l,Jeux *tabJeux[],int tailleLogJ
     int idJeux;
     int idADnew;
     int a;
+    int verif;
     char jeuxBack[20],nomPrenom[20];
     printf("Quelle est le jeu que vous voulez rendre ?\n");
     c=getchar();
@@ -843,6 +841,14 @@ void retourJeux (ListeAD AD,ListeReserv r,Liste l,Jeux *tabJeux[],int tailleLogJ
     printf("Donnez votre prenom et votre nom (le nom en MAJUSCULE):\n");   
     fgets(nomPrenom,20,stdin);
     nomPrenom[strlen(nomPrenom)-1] = '\0';
+    idJeux=rechercheIDv4(jeuxBack,tabJeux,tailleLogJeux);
+    verif=verificationJeux(l,idJeux);
+    printf("%d\n", idJeux );
+    if(verif==1)
+    {
+        printf("Ce jeu n'est pas dans la liste des emprunts\n");
+        sousMenu(tabJeux,tailleLogJeux,l,AD,r);
+    }
     retourIDv2(nomPrenom,AD,&i,&idBackAD);
     if(i>1)
     {
@@ -862,18 +868,38 @@ void retourJeux (ListeAD AD,ListeReserv r,Liste l,Jeux *tabJeux[],int tailleLogJ
     idJeux=rechercheIDv4(jeuxBack,tabJeux,tailleLogJeux);
     idADnew=affectationReserv(r,idJeux,&a);
     printf("\n");
-    printf("a : %d\n",a);
+    printf("%d %d %d %d\n", a, idJeux,idADnew, idBackAD);
     if (a==1)
     {   
         r=supprimer(r,idADnew,idJeux);
         l=ajoutEmprunt(l,idADnew,idJeux,idBackAD);
     }
-    if(a==0)
+    else
     {
         l=supprimerEmp(l,idBackAD,idJeux);
-        //ajout +1 dans nbexmplaire avec la fonction de JAJA!
+        for (int j = 0; j < tailleLogJeux; j++)
+        {
+            if (tabJeux[j]->id==idJeux)
+            {
+                tabJeux[j]->nbExemplaire=tabJeux[j]->nbExemplaire+1;
+            }
+        }
     }
     printf("Vous avez bien rendu le jeux %s, merci\n",jeuxBack);
+}
+
+int verificationJeux(Liste l,int idJeux)
+{   
+    int verif;
+    while(l!=NULL)
+    {
+        if (l->idJeu == idJeux)
+        {
+            return 0;
+        }
+        l=l->suiv;
+    }
+    return 1;
 }
 
 void retourIDv2(char nomPrenom[],ListeAD AD,int *i,int *idBack)
@@ -881,12 +907,12 @@ void retourIDv2(char nomPrenom[],ListeAD AD,int *i,int *idBack)
     *i=0;
     while(!videAD(AD))
     {
-    if(strcmp(nomPrenom,AD->prenomNom)==0)
+        if(strcmp(nomPrenom,AD->prenomNom)==0)
         {
-        *idBack=AD->idAdherent;
-        *i=*i+1;
+            *idBack=AD->idAdherent;
+            *i=*i+1;
         }
-    AD=AD->s;
+        AD=AD->s;
     }
 }
 
@@ -918,7 +944,7 @@ int affectationReserv(ListeReserv r,int id,int *a)
             *a=1;
             return r->idAdherent;
         }
-    r=r->next;
+        r=r->next;
     }
     *a=0;
     return 0;
@@ -928,7 +954,6 @@ ListeReserv supprimer(ListeReserv r, int x, int idJeux)
 {   
     if (r==NULL)
     {
-        printf("x n'existe pas dans l.\n");
         return r;
     }
     if (x == r->idAdherent)
@@ -979,8 +1004,9 @@ Liste supprimerEmp(Liste l,int idBackAD,int idJeux)
     {
         return l;
     }
-    if (idBackAD == l->idAdherent && idJeux == l->idJeu)
-        return supprimerEnTeteEmp(l);   
+    if (idJeux == l->idJeu)
+        if (idBackAD == l->idAdherent)
+            return supprimerEnTeteEmp(l);  
     l->suiv = supprimerEmp(l->suiv, idBackAD, idJeux);
     return l;
 }
@@ -990,7 +1016,7 @@ Liste supprimerEnTeteEmp(Liste l)
     Maillon *m;
     if (l==NULL)
     {
-        printf("opération interdite.\n");
+        printf("operation interdite.\n");
         exit(1);
     }
     m = l;
@@ -1001,7 +1027,263 @@ Liste supprimerEnTeteEmp(Liste l)
 
 //--------------------- Fonction 6 : annulation d'une réservation ---------------------
 
+// Demander le prenom Nom de la personne, rechercher son ID Adherent via son nom puis rechercher la/les reservation(s) en cours en affichant les jeux reserver puis lui demander si il souhaite réellement l'annuler//
+
+void affichageNbReservation (Jeux *tabJeux[], int tailleLogJeux,ListeAD AD,Liste l,ListeReserv r)
+{
+    int i, idAdherent,trouve, nbReservation, jeuSupp;
+    char nomPrenom[20], nomJeu[20];
+    char c, choix;
+    int saisieID;
+    printf("Saississez votre prenom et votre nom en majuscule : (ex : Xavier POLIN) \n");
+    c=getchar();
+    fgets(nomPrenom,20,stdin);
+    nomPrenom[strlen(nomPrenom)-1] = '\0';
+    saisieID=rechercheIdAdherent(nomPrenom, AD, &trouve, saisieID);
+    if(trouve==0)
+    {
+            printf("%s ne correspond pas a un adherent de la ludotheque\n",nomPrenom);
+            sousMenu(tabJeux,tailleLogJeux,l,AD,r); 
+    }
+    else if(trouve>1)
+    {
+        printf("Il existe %d personne possedant le meme prenom et nom que vous, veuillez renseignez votre ID adherent s'il vous plait :\n",trouve);
+        scanf("%d", &saisieID); 
+    }
+    if(trouve>=1)
+    {
+        printf("Reservation de %s :\n", nomPrenom);
+        rechJeuCorrespondant(tabJeux, r, saisieID, tailleLogJeux);
+        nbReservation=nbReserv(r, saisieID);
+        if(nbReservation==0)
+        {
+            printf("Vous n'avez aucune reservation en cours \n");
+            sousMenu(tabJeux, tailleLogJeux, l,AD,r);
+        }
+        if(nbReservation==1)
+        {
+
+            printf("Saississez le jeu dont vous voulez supprimer la reservation \n");
+            fgets(nomJeu,20,stdin);
+            nomJeu[strlen(nomJeu)-1] = '\0';
+            printf("Nom du jeu : %s \n", nomJeu);
+            jeuSupp=findJeu(r, nomJeu, tabJeux, tailleLogJeux, l, AD, saisieID);
+            supprimerReservation(r, saisieID,jeuSupp);
+        }
+        if(nbReservation>1)
+        {
+            printf("Saississez le jeu dont vous voulez supprimer la reservation \n");
+            fgets(nomJeu,20,stdin);
+            nomJeu[strlen(nomJeu)-1] = '\0';
+            printf("Nom du jeu : %s \n", nomJeu);
+            jeuSupp=findJeu(r, nomJeu, tabJeux, tailleLogJeux, l, AD, saisieID);
+            supprimerReservation(r, saisieID,jeuSupp);
+        }
+    }
+}
+
+int nbReserv(ListeReserv r, int saisieID)
+{
+    int nbReservation=0;
+    while(r!=NULL)
+    {
+        if (saisieID==r->idAdherent)
+            nbReservation++;
+        r=r->next;
+    }
+    return nbReservation;
+}
 
 
+int rechercheIdAdherent(char nomPrenom[],ListeAD AD,int *trouve,int saisieID)
+{   
+    *trouve=0;
+    while(AD!=NULL)
+    {
+        if(strcmp(nomPrenom,AD->prenomNom)==0)
+            {
+            saisieID=AD->idAdherent;
+            *trouve=*trouve+1;
+            }
+        AD=AD->s;
+    }
+    return saisieID;
+}
+
+
+void afficherReservation(Jeux *tabJeux [], int j)
+{
+    //printf("Jeux : %s \t Date de Reservation prévue pour le jeu : %04d %02d/%02d/%d \n \n", tabJeux[i]->nom, tabJeux[i]->);
+    printf("Nom du jeu : %s \n \n", tabJeux[j]->nom);
+    
+}
+
+void rechJeuCorrespondant(Jeux *tabJeux[], ListeReserv r, int saisieID, int tailleLogJeux)
+{
+    
+    
+    int j;
+    int idJeubon;
+    while(r !=NULL)
+    {
+
+        if(saisieID==r->idAdherent)
+        {
+            idJeubon=r->idJeu;
+            for(j=0; j<tailleLogJeux; j++)
+            {
+                if(tabJeux[j]->id == idJeubon)
+                     afficherReservation(tabJeux, j);    
+            } 
+        }
+        r=r->next;
+    }
+}
+
+ListeReserv supprimerEnTeteRes(ListeReserv r)
+{
+  MaillonReserv *o;
+  if (r==NULL)
+  {
+      printf("opération interdite\n");
+      exit (1);
+  }
+  o=r;
+  r=r->next;
+  free(o);
+  return r;
+}
+
+ListeReserv supprimerReservation(ListeReserv r, int saisieID, int jeuSupp)
+{
+    if(r==NULL)
+        return r;
+    if(saisieID==r->idAdherent){
+        printf("%d\n", jeuSupp );
+        if(jeuSupp==r->idJeu)
+        {
+            printf("tu me casses les couilles\n");
+            return supprimerEnTeteRes(r);
+        }
+        printf("la j'en ai ma claque\n");}
+    r->next=supprimerReservation(r->next,saisieID, jeuSupp);
+    return r;
+}
+
+int findJeu (ListeReserv r, char nomJeu[20], Jeux *tabJeux[], int tailleLogJeux, Liste l, ListeAD AD, int saisieID)
+{
+    int i, jeuSupp;
+    char c;
+    for(i=0; i<tailleLogJeux;i++)//Parcours du tableau tabJeux jusqu'a trouver le nom du Jeu correspondant pour ensuite retourner l'id du jeu correspondant.
+    {    
+        if(strcmp(tabJeux[i]->nom, nomJeu)==0)
+        {
+            jeuSupp=tabJeux[i]->id;
+            return jeuSupp;
+        }
+    }
+    //Verification que le jeu entre dans le terminal correspond bien a un jeu reservé par la personne, si non, on redemande a l'utilisateur d'entre le nom du Jeu 
+    //et on rappelle la fonction par recursivité
+    printf("Le jeu %s n'est pas present dans notre Ludotheque, voici la liste de vos reservations : \n \n", nomJeu);
+    rechJeuCorrespondant(tabJeux, r, saisieID, tailleLogJeux);
+    printf("Veuillez a nouveau entrez le jeu dont vous souhaitez supprimer la reservation : \n");
+    //c=getchar();
+    fgets(nomJeu,20,stdin);
+    nomJeu[strlen(nomJeu)-1] = '\0';
+    return findJeu(r,nomJeu,tabJeux, tailleLogJeux, l, AD, saisieID);
+    exit(1);
+}
+
+ListeReserv supprimerReservationv2(ListeReserv r, int jeuSupp)
+{
+    if(r==NULL)//Test d'arret de la fonction 
+        return r;
+    if(jeuSupp==r->idJeu)
+    {               //Condition pour supprimer la reservation : Id présent dans jeuSupp = id present dans la reservation
+        printf("Reservation supprimee \n");
+        return supprimerEnTeteRes(r);  //Appel de la fonction supprimerEnTete qui supprimera le jeu correspondant
+    }
+    r->next=supprimerReservationv2(r->next, jeuSupp); //Appel de la fonction par recursivité 
+    return r;
+}
 
 //----------------------- Fonction de sauvegarde ------------------------------
+
+void sauvegardeEmprunts (Liste l)
+{   
+    int i=0;
+    FILE *flot;
+    flot=fopen("Emprunts.txt","w");
+    if(flot == NULL)
+    {
+        printf("Problème d'ouverture du fichier\n");
+        exit(1);
+    }
+    fprintf(flot,"%04d %04d %03d %02d %02d %04d",l->idEmprunt,l->idAdherent,l->idJeu,l->jour,l->mois,l->annees);
+    l=l->suiv;
+    while(l!=NULL)
+    {   
+        fprintf(flot,"\n");
+        fprintf(flot,"%04d %04d %03d %02d %02d %04d",l->idEmprunt,l->idAdherent,l->idJeu,l->jour,l->mois,l->annees);
+        l=l->suiv; 
+    }
+    fclose(flot);
+}
+
+void sauvegarderJeux(Jeux *tabJeux[], int tailleLogJeux)
+{
+    FILE *flot;
+    int i;
+    flot=fopen("ficjeux.txt", "w");
+    if(flot==NULL)
+        {
+            printf("Erreur lors de l'ouverture du fichier ficjeux.txt en ecriture \n");
+            exit(1);
+        }
+    for(i=0; i<tailleLogJeux; i++)
+    {
+        fprintf(flot,"%d %s %d %s\n", tabJeux[i]->id, tabJeux[i]->type, tabJeux[i]->nbExemplaire, tabJeux[i]->nom);
+    }
+    fclose(flot);
+}
+
+void sauvegardeReserv(ListeReserv r)
+{   
+    int i=0;
+    FILE *flot;
+    flot=fopen("Reservation.txt","w");
+    if(flot == NULL)
+    {
+        printf("Problème d'ouverture du fichier\n");
+        exit(1);
+    }
+    fprintf(flot,"%02d %04d %d %02d %02d %0004d",r->idResa,r->idAdherent,r->idJeu,r->jour,r->mois,r->annees);
+    r=r->next;
+    while(r!=NULL)
+    {   
+        fprintf(flot,"\n");
+        fprintf(flot,"%02d %04d %d %02d %02d %0004d",r->idResa,r->idAdherent,r->idJeu,r->jour,r->mois,r->annees);
+        r=r->next; 
+    }
+    fclose(flot);
+}
+
+void sauvegardeAD(ListeAD AD)
+{   
+    int i=0;
+    FILE *flot;
+    flot=fopen("Adherent.txt","w");
+    if(flot == NULL)
+    {
+        printf("Problème d'ouverture du fichier\n");
+        exit(1);
+    }
+    while(AD->s!=NULL)
+    {   
+        fprintf(flot,"%04d %02d %02d %04d %s %s",AD->idAdherent, AD->jour,AD->mois,AD->annees,AD->civ,AD->prenomNom);
+        fprintf(flot,"\n");
+        AD = AD->s;
+    }
+    fprintf(flot,"%04d %02d %02d %04d %s %s ",AD->idAdherent, AD->jour,AD->mois,AD->annees,AD->civ,AD->prenomNom);
+    fclose(flot);
+}

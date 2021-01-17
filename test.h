@@ -104,7 +104,7 @@ void afficherJeux( Jeux *tabJeux[], int tailleLogJeux);
 // ------------------------------- Fonction 2 : affichage de la liste d'emprunts en cours ---------------------------------
 
 void afficherListe(Liste l, Jeux *tabJeux[], int tailleLogJeux,ListeAD AD);
-int rechercheID (Liste l, Jeux *tabJeux[],int *rang,int tailleLogJeux);
+void affichageIdentiteAD(ListeAD AD, int idAD);
 
 //---------------------------- Fonction 3 : affichage des résèrvations d'un jeu ------------------------------------
 
@@ -137,7 +137,23 @@ Liste ajoutEmprunt(Liste l,int idADnew,int idJeux,int idBackAD);
 Liste supprimerEnTeteEmp(Liste l);
 Liste supprimerEmp(Liste l,int idBackAD,int idJeux);
 Booleen videAD(ListeAD AD);
+int verificationJeux(Liste l,int idJeux);
 
 //--------------------- Fonction 6 : annulation d'une réservation ---------------------
 
+void affichageNbReservation (Jeux *tabJeux[], int tailleLogJeux,ListeAD AD,Liste l,ListeReserv r);
+int nbReserv(ListeReserv r, int saisieID);
+int rechercheIdAdherent(char nomPrenom[],ListeAD AD,int *trouve,int saisieID);
+void afficherReservation(Jeux *tabJeux [], int j);
+void rechJeuCorrespondant(Jeux *tabJeux[], ListeReserv r, int saisieID, int tailleLogJeux);
+ListeReserv supprimerEnTeteRes(ListeReserv r);
+ListeReserv supprimerReservation(ListeReserv r, int saisieID, int jeuSupp);
+int findJeu (ListeReserv r, char nomJeu[20], Jeux *tabJeux[], int tailleLogJeux, Liste l, ListeAD AD, int saisieID);
+ListeReserv supprimerReservationv2(ListeReserv r, int jeuSupp);
+
 //----------------------- Fonction de sauvegarde ------------------------------
+
+void sauvegardeEmprunts (Liste l);
+void sauvegarderJeux(Jeux *tabJeux[], int tailleLogJeux);
+void sauvegardeReserv(ListeReserv r);
+void sauvegardeAD(ListeAD AD);
