@@ -111,10 +111,12 @@ Liste supprimerEmp(Liste l,int idBackAD,int idJeux);
 void afficherListeReservtempo(ListeReserv r);
 void afficherListeTemp(Liste l);
 
-
+int verificationJeux(Liste l,int idJeux);
 
 //Annulation Reservation 
 //void affichageNbReservation (Jeux *tabJeux[], int tailleLogJeux,ListeAD AD, Liste l,ListeReserv r);
 void affichageNbReservation (Jeux *tabJeux[], int tailleLogJeux,ListeAD AD, Liste l,ListeReserv r);
 void rechercheIdAdherent(char nomPrenom[],ListeAD AD,int *erreur,int *saisieID);
 
+//Sauvegarde
+void sauvegardeEmprunts (Liste l);
