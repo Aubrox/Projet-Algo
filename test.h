@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
+
 
 typedef struct
 {
@@ -97,15 +99,22 @@ void retourJeux (ListeAD AD,ListeReserv R,Liste l,Jeux *tabJeux[],int tailleLogJ
 Booleen videAD(ListeAD AD);
 int comparaison (char Nom[],char Prenom[],ListeAD AD);
 void retourIDv2(char nomPrenom[],ListeAD AD,int *i,int *idBack);
-void decalerADroite(char jeuxBack[]);
 //suite retour jeux
 //int rechercheIDv3 (ListeReserv r, int idBackAD);
 int rechercheIDv4 (char nomJeux[], Jeux *tabJeux[],int tailleLogJeux);
 int affectationReserv(ListeReserv r,int id,int *a);
-ListeReserv supprimer(ListeReserv l, int x);
+ListeReserv supprimer(ListeReserv l, int x,int idJeux);
 ListeReserv supprimerEnTete(ListeReserv l);
-//Liste ajoutEmprunt(Liste l,int idADnew,int idJeux);
+Liste ajoutEmprunt(Liste l,int idADnew,int idJeux,int idBackAD);
+Liste supprimerEnTeteEmp(Liste l);
+Liste supprimerEmp(Liste l,int idBackAD,int idJeux);
+void afficherListeReservtempo(ListeReserv r);
+void afficherListeTemp(Liste l);
+
 
 
 //Annulation Reservation 
 //void affichageNbReservation (Jeux *tabJeux[], int tailleLogJeux,ListeAD AD, Liste l,ListeReserv r);
+void affichageNbReservation (Jeux *tabJeux[], int tailleLogJeux,ListeAD AD, Liste l,ListeReserv r);
+void rechercheIdAdherent(char nomPrenom[],ListeAD AD,int *erreur,int *saisieID);
+
