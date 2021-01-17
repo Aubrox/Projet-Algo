@@ -1,8 +1,8 @@
-125 Logique..... 12 League of legend
-145 Construction 5 Counter strike
-172 Plateau..... 16 Monopoly
-158 Plateau..... 2 La bonne Paye
-147 Carte....... 46 Tarot
-012 Tuile....... 12 Dominos
-209 Tuile....... 4 Qwirkle
+125 Logique..... 3 League of legend
+145 Construction 1 Counter strike
+172 Plateau..... 0 Monopoly
+158 Plateau..... 0 La bonne Paye
+147 Carte....... 2 Tarot
+012 Tuile....... 1 Dominos
+209 Tuile....... 3 Qwirkle
 369 Carte....... 0 Uno

@@ -51,59 +51,93 @@ typedef struct maillonReserv
 typedef enum {faux,vrai} Booleen;
 
 void global (void);
-int test1 (Jeux *tabJeux[]);
-int remplirTab(Jeux *tabJeux[],int taillePhyJeux);
-void afficherJeux( Jeux *tabJeux[], int tailleLogJeux);
-Jeux LireJeux (FILE *flot);
+
+
+// Fonctions bonus
+
+void afficherListeTemp(Liste l);
+void afficherListeADtempo(ListeAD AD);
+void afficherListeReservtempo(ListeReserv r);
+
+
+
+// -------------------------------------- Menu et sous menu ------------------------------------------
+
 int choixMenu (Jeux *tabJeux[],int tailleLogJeux,Liste l,ListeAD AD,ListeReserv r);
 void sousMenu(Jeux *tabJeux[],int tailleLogJeux,Liste l,ListeAD AD,ListeReserv r);
 void affichageMenu(void);
+
+// ------------------------------------------------ Chargement et tri du fichier jeu en mémoire ----------------------------------------------------------
+
+int test1 (Jeux *tabJeux[]);
+int remplirTab(Jeux *tabJeux[],int taillePhyJeux);
+Jeux LireJeux (FILE *flot);
 void triTabJeux(Jeux *tabJeux[], int tailleLogJeux);
 Jeux* copyJeu(Jeux *Jeu);
 
+//------------------------------------------- Création de la liste d'emprunt ---------------------------------------------
 
-// LISTE
 Liste listenouv(void);
 Booleen vide(Liste l);
 Liste testEmprunt (Liste l);
 Liste insertionEnTete(Liste l,Maillon f);
-void afficherListe(Liste l, Jeux *tabJeux[], int tailleLogJeux,ListeAD AD);
-int rechercheID (Liste l, Jeux *tabJeux[],int *rang,int tailleLogJeux);
+Liste insertionCroissante(Liste l, Maillon f);
 
+//------------------------------------------- Création de la liste d'adhérents ---------------------------------------------
 
-//LISTE ADHERENT
 ListeAD ChargementAdherent (ListeAD l);
 ListeAD insertionEnTeteAD(ListeAD l,MaillonAD f);
 ListeAD listenouvAD(void);
+ListeAD insertionCroissanteAD(ListeAD l,MaillonAD f);
 
+//------------------------------- Création de la liste de réservation ---------------------------------------
 
-//LISTE RESERVATION
-int rechercheRangAvecLeNomJeux (char nomJeux[], Jeux *tabJeux[],int *trouve,int tailleLogJeux);
-void affichageReservation (ListeReserv r,Jeux *tabJeux[], int tailleLogJeux);
-int rechPuisAffichage (ListeReserv r,char nomJeux[], int idJeux,int trouve);
-
-
-// Chargement Réservations
 ListeReserv testReservation (ListeReserv r);
 ListeReserv insertionEnTeteReserv (ListeReserv r, MaillonReserv res);
 ListeReserv insertionCroissanteReserv(ListeReserv r, MaillonReserv mRES);
 ListeReserv listenouvReserv ( void );
+
+// ------------------------------- Fonction 1 : affichage des jeux disponibles ---------------------------------------------------
+
+void afficherJeux( Jeux *tabJeux[], int tailleLogJeux);
+
+// ------------------------------- Fonction 2 : affichage de la liste d'emprunts en cours ---------------------------------
+
+void afficherListe(Liste l, Jeux *tabJeux[], int tailleLogJeux,ListeAD AD);
+int rechercheID (Liste l, Jeux *tabJeux[],int *rang,int tailleLogJeux);
+
+//---------------------------- Fonction 3 : affichage des résèrvations d'un jeu ------------------------------------
+
+int rechercheRangAvecLeNomJeux (char nomJeux[], Jeux *tabJeux[],int *trouve,int tailleLogJeux);
+void affichageReservation (ListeReserv r,Jeux *tabJeux[], int tailleLogJeux);
+int rechPuisAffichage (ListeReserv r,char nomJeux[], int idJeux,int trouve);
+int reservoupas(ListeReserv r,char nomJeux[], int idJeux);
 Booleen videReserv(ListeReserv r);
 
+//--------------------- Fonction 4 : Saisie et enregistrement d'un nouvel emprunt/reservation -----------------------------
 
-//test
-void afficherListeADtempo(ListeAD AD);
-void afficherListeReservtempo(ListeReserv r);
-int reservoupas(ListeReserv r,char nomJeux[], int idJeux);
 int globalNouvEnreg(Jeux *tabJeux[],int tailleLogJeux,Liste l,ListeAD AD, ListeReserv r);
-ListeAD insertionCroissanteAD(ListeAD l,MaillonAD f);
 int nouvelIDAD(ListeAD AD);
-Liste insertionCroissante(Liste l, Maillon f);
-void afficherListeTemp(Liste l);
 int rechercheIDAD(char prenomNomExistant[], ListeAD AD);
 int creationAdherent(ListeAD AD);
-
 void nouvelEmprunt(Liste e, int IDjeu, int IDAD);
 int nouvelIDEmp(Liste e);
 void nouvelleReservation(ListeReserv r, int IDjeu,int IDAD);
 int nouvelIDRes(ListeReserv r);
+
+//--------------------------- Fonction 5 : retour d'un jeu ------------------------------
+
+void retourJeux (ListeAD AD,ListeReserv R,Liste l,Jeux *tabJeux[],int tailleLogJeux);
+void retourIDv2(char nomPrenom[],ListeAD AD,int *i,int *idBack);
+int rechercheIDv4 (char nomJeux[], Jeux *tabJeux[],int tailleLogJeux);
+int affectationReserv(ListeReserv r,int id,int *a);
+ListeReserv supprimer(ListeReserv l, int x,int idJeux);
+ListeReserv supprimerEnTete(ListeReserv l);
+Liste ajoutEmprunt(Liste l,int idADnew,int idJeux,int idBackAD);
+Liste supprimerEnTeteEmp(Liste l);
+Liste supprimerEmp(Liste l,int idBackAD,int idJeux);
+Booleen videAD(ListeAD AD);
+
+//--------------------- Fonction 6 : annulation d'une réservation ---------------------
+
+//----------------------- Fonction de sauvegarde ------------------------------
